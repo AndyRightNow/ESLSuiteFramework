@@ -1,0 +1,388 @@
+/************************************
+
+  General style
+
+  Created by Andy Zhou from ESL Suite
+
+**************************************/
+
+body {
+  font-family: 'Roboto', sans-serif!important;
+  font-weight: 300;
+}
+
+a,
+a:hover {
+  color: #F89406;
+}
+
+
+/****************
+  Transitions
+*****************/
+
+a,
+a:hover,
+.learnmore,
+.learnmore:hover,
+.popoverwnd,
+.transition {
+  transition: all .4s ease-in-out;
+  -webkit-transition: all .4s ease-in-out;
+  -o-transition: all .4s ease-in-out;
+  -moz-transition: all .4s ease-in-out;
+}
+
+
+
+/********************
+  Padding and Margin
+*********************/
+
+.paddinglr20 {
+  padding-left: 20%;
+  padding-right: 20%;
+}
+
+.paddingtb {
+  padding-top: 2%;
+  padding-bottom: 2%;
+}
+
+.paddingtb10 {
+  padding-top: 10%;
+  padding-bottom: 10%;
+}
+
+.paddinglr {
+  padding-left: 2%;
+  padding-right: 2%;
+}
+
+.paddinglr10 {
+  padding-left: 10%;
+  padding-right: 10%;
+}
+
+.paddinglr5 {
+  padding-left: 5%;
+  padding-right: 5%;
+}
+.paddinglr1 {
+  padding-left: 1%;
+  padding-right: 1%;
+}
+.marginlr {
+  margin-left: 2%;
+  margin-right: 2%;
+}
+
+.margintb5 {
+  margin-top: 5%;
+  margin-bottom: 5%;
+}
+
+.marginlr5 {
+  margin-left: 5%;
+  margin-right: 5%;
+}
+.margintb {
+  margin-top: 2%;
+  margin-bottom: 2%;
+}
+
+.marginauto {
+  margin: auto;
+}
+
+
+
+/****************
+  Shadow
+*****************/
+
+.shadow {
+  box-shadow: 0px 5px 20px 0px rgba(0, 0, 0, 0.2);
+}
+
+
+/****************
+  Background color
+*****************/
+
+.grayback {
+  background-color: #EEEEEE;
+}
+
+.whiteback {
+  background-color: white;
+}
+
+
+/****************
+  Title
+*****************/
+
+.title {
+  font-size: 4vh;
+}
+
+.subtitle {
+  font-size: 3vh;
+}
+
+
+/****************
+  Content font
+*****************/
+
+.contfont {
+  font-size: 3vh;
+}
+
+
+/****************
+  Basic button
+*****************/
+
+.learnmore {
+  display: inline-block;
+  padding: 0.7vw 1.4vw;
+  background-color: #f9690e;
+  font-size: 1.5vw;
+  color: white;
+  border-radius: 2px;
+}
+
+.learnmore:hover {
+  text-decoration: none;
+  color: white;
+  background-color: #D35400;
+}
+
+
+/****************
+  Font styling
+*****************/
+
+.whitetext {
+  color: white;
+}
+.orangetext {
+  color: #f89406;
+}
+
+.bluetext {
+  color: #4183D7;
+}
+.bold {
+  font-weight: bold;
+}
+
+
+/**********************************
+  Class for scroll show effects
+***********************************/
+
+.scrollshow {
+  opacity: 0;
+}
+
+
+/****************
+  Display
+*****************/
+
+.inlineblock {
+  display: inline-block;
+  vertical-align: top;
+}
+
+/****************
+  Widths
+*****************/
+.width10{
+  width: 10%;
+}
+.width20{
+  width: 20%;
+}
+.width30{
+  width: 30%;
+}
+.width40{
+  width: 40%;
+}
+.width50{
+  width: 50%;
+}
+.width60{
+  width: 60%;
+}
+.width70{
+  width: 70%;
+}
+.width80{
+  width: 80%;
+}
+.width90{
+  width: 90%;
+}
+
+/****************
+  Header styling
+*****************/
+
+#header1 {
+  background-size: cover;
+  background-repeat: no-repeat;
+  color: white;
+}
+
+.headtitle {
+  font-size: 8vh;
+}
+
+.headscript {
+  font-size: 4vh;
+}
+
+
+/********************
+  Popped-over window
+*********************/
+
+.popoverbg {
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.8);
+  position: fixed;
+  z-index: 9999;
+  top: 0;
+  left: 0;
+}
+
+.nooverflow {
+  overflow: hidden;
+}
+
+.popoverwnd {
+  position: relative;
+  width: 60%;
+  border-radius: 3px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0, 0);
+  -webkit-transform: translate(-50%, -50%) scale(0, 0);
+  -o-transform: translate(-50%, -50%) scale(0, 0);
+  -moz-transform: translate(-50%, -50%) scale(0, 0);
+}
+
+.none {
+  display: none;
+}
+
+
+/***********************************
+
+  Mobile compatibility
+
+***********************************/
+
+@media screen and (max-width: 992px) {
+  /****************
+    Header styling
+  *****************/
+  #header1 {
+    margin-top: 15%;
+    background-position: center 8%;
+    background-attachment: scroll;
+  }
+  .headtitle {
+    font-size: 3vh;
+  }
+  .headscript {
+    font-size: 2vh;
+  }
+  /****************
+    Padding and Margin
+  *****************/
+  .paddinglr20 {
+    padding-left: 10%;
+    padding-right: 10%;
+  }
+  /****************
+    Title
+  *****************/
+  .title {
+    font-size: 3vh;
+  }
+  .subtitle {
+    font-size: 2.5vh;
+  }
+  /****************
+    Basic Button
+  *****************/
+  .learnmore {
+    min-width: 0;
+    min-height: 0;
+    padding: 1vw 2vw;
+    font-size: 2.5vh;
+  }
+  /****************
+    Content font
+  *****************/
+  .contfont {
+    font-size: 2.5vh;
+  }
+  /****************
+    Widths
+  *****************/
+.width10,
+.width20,
+.width30,
+.width40,
+.width50,
+.width60,
+.width70,
+.width80,
+.width90{
+  width: 90%;
+}
+
+
+/***********************************
+
+  Tablet compatibility
+
+***********************************/
+
+@media screen and (max-width: 992px) and (min-width: 601px) {
+  .headtitle {
+    font-size: 5vh;
+  }
+  .title {
+    font-size: 4vh;
+  }
+  .learnmore {
+    min-width: 0;
+    min-height: 0;
+    padding: 1vw 2vw;
+    font-size: 2.5vw;
+  }
+
+/****************
+Widths
+*****************/
+.width10,
+.width20,
+.width30,
+.width40,
+.width50,
+.width60,
+.width70,
+.width80,
+.width90{
+  width: 70%;
+}
+}
