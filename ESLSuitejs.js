@@ -15,6 +15,17 @@
                     jqueryObject.css(prop, classObject[prop]);
                 }
             }
+        },
+        storeInlineCSS: function(jqueryObject) {
+            if (typeof jqueryObject !== "undefined") {
+                let styleStr = jqueryObject.attr('style');
+                return typeof styleStr !== "undefined" ? styleStr : "";
+            }
+        },
+        restoreInlineCSS: function(jqueryObject, styleStr) {
+            if (typeof jqueryObject !== "undefined" && typeof styleStr !== "undefined") {
+                jqueryObject.attr('style', styleStr);
+            }
         }
     };
 
@@ -41,23 +52,14 @@
                     curEleBottom = $(currElem).offset().top + $(currElem).height();
 
                 if (windowBottom >= curEleBottom) {
-                    let prevTrans = {	//Store the previous transition properties
-                        "transition": typeof $(currElem).css("transition") === "undefined" ?
-                            "" : $(currElem).css("transition"),
-                        "-webkit-transition": typeof $(currElem).css("-webkit-transition") === "undefined" ?
-                            "" : $(currElem).css("-webkit-transition"),
-                        "-o-transition": typeof $(currElem).css("-o-transition") === "undefined" ?
-                            "" : $(currElem).css("-o-transition"),
-                        "-moz-transition": typeof $(currElem).css("-moz-transition") === "undefined" ?
-                            "" : $(currElem).css("-moz-transition")
-                    };
+                    let styleStr = Utility.storeInlineCSS($(currElem));// Store the inline css style
 
                     Utility.addCSS($(currElem), transition);
                     $(currElem).removeClass('scrollshow');
 
-                    setTimeout(function() {	//After the animation, restore the transition properties
-                        Utility.addCSS($(currElem), prevTrans);
-                    }, transitionTime);
+                    setTimeout(function() {  //After the animation, restore the inline style
+                        Utility.restoreInlineCSS($(currElem), styleStr);
+                    }, transitionTime - 1);
                 }
             }
         });
