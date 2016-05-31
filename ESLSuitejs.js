@@ -122,7 +122,8 @@ $(document).ready(() => {
         const MOBILE_WIDTH = 601;
         const NO_OVERFLOW = "nooverflow";
         const NONE = "none";
-        
+        const POP_CONT_AMOUNT = 50;
+
         //----------------------
         //  Build HTML
         //----------------------
@@ -176,8 +177,7 @@ $(document).ready(() => {
         //---------------------------------------------
         //  Show the window and append the content
         //---------------------------------------------
-        const AMOUNT = 50;
-        for (let i = 1; i <= AMOUNT; i++){
+        for (let i = 1; i <= POP_CONT_AMOUNT; i++){
             let thisCont = "popcont" + i;
             let thisBtn = "popbtn" + i;
             $("." + thisBtn).click((event) => {
