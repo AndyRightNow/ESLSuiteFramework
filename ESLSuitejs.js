@@ -119,10 +119,10 @@ $(document).ready(() => {
         const SHOW_PROP = "translate(-50%, -50%) scale(1)"; //  Property used to show the window
         const HIDE_PROP = "translate(-50%, -50%) scale(0)"; //  Property used to hide the window
         const ANIMATE_TIME = 400;   //  Window animate time
-        const MOBILE_WIDTH = 601;
-        const NO_OVERFLOW = "nooverflow";
-        const NONE = "none";
-        const POP_CONT_AMOUNT = 50;
+        const MOBILE_WIDTH = 601;   //  Mobile screen width
+        const NO_OVERFLOW = "nooverflow";   //  No vertical scrolling
+        const NONE = "none";    //  Display none
+        const POP_CONT_MAX = 50; //  Max popped out window content
 
         //----------------------
         //  Build HTML
@@ -177,7 +177,7 @@ $(document).ready(() => {
         //---------------------------------------------
         //  Show the window and append the content
         //---------------------------------------------
-        for (let i = 1; i <= POP_CONT_AMOUNT; i++){
+        for (let i = 1; i <= POP_CONT_MAX; i++){
             let thisCont = "popcont" + i;
             let thisBtn = "popbtn" + i;
             $("." + thisBtn).click((event) => {
