@@ -101,5 +101,128 @@ $(document).ready(() => {
             }
         });
     })();
+
+    //---------------------------------------------------
+    //
+    //  Popped-out window
+    //
+    //  Usage: Add CSS Class 'popoverbtn'
+    //  to the button that triggers popped-out window.
+    //  Add CSS Class 'popovercontent' to the outermost
+    //  HTML element of your content in popped-out window.
+    //
+    //---------------------------------------------------
+    (function() {
+        //-------------
+        //  Constants
+        //-------------
+        const SHOW_PROP = "translate(-50%, -50%) scale(1)"; //  Property used to show the window
+        const HIDE_PROP = "translate(-50%, -50%) scale(0)"; //  Property used to hide the window
+        const ANIMATE_TIME = 400;   //  Window animate time
+        const MOBILE_WIDTH = 601;
+        const NO_OVERFLOW = "nooverflow";
+        const NONE = "none";
+        
+        //----------------------
+        //  Build HTML
+        //----------------------
+        (function() {
+            //--------------------------
+            //  Build outer background
+            //--------------------------
+            var bg = "<div class='popoverbg none'></div>";
+            $(bg).appendTo('body');
+
+            //--------------------------
+            //  Build popped-out window
+            //--------------------------
+            var wnd = "<div class='popoverwnd whiteback text-center'></div>";
+            $(wnd).appendTo('.popoverbg');
+
+            //---------------------------
+            //  Build close button
+            //---------------------------
+            var closebtn = "<div class='close glyphicon glyphicon-remove'></div>";
+            $(closebtn).appendTo('.popoverwnd');
+
+            //---------------------------
+            //  Append content
+            //---------------------------
+            $(".popovercontent").appendTo('.popoverwnd').removeClass(NONE);
+        })();
+
+        //------------------------
+        //  Transform function
+        //------------------------
+        function transform(ele, prop){
+            if (typeof ele !== "undefined" && typeof prop !== "undefined"){
+                ele.css("transform", prop);
+                ele.css("-webkit-transform", prop);
+                ele.css("-o-transform", prop);
+                ele.css("-moz-transform", prop);
+            }
+        }
+
+        //-------------------------------
+        //  Popped out window jquery vars
+        //-------------------------------
+        var background = $('.popoverbg'),
+            wnd = $('.popoverwnd'),
+            close = $('.close');
+
+        //  Currrent popped out content
+        var curPopCont = null;
+
+        //---------------------------------------------
+        //  Show the window and append the content
+        //---------------------------------------------
+        const AMOUNT = 50;
+        for (let i = 1; i <= AMOUNT; i++){
+            let thisCont = "popcont" + i;
+            let thisBtn = "popbtn" + i;
+            $("." + thisBtn).click((event) => {
+                //--------------------------
+                //  Mobile compatibility
+                //--------------------------
+                if ($(window).width() < MOBILE_WIDTH){
+                    wnd.css("width", "100vw").css("height", "80vh");
+                }
+
+                //  Show backgournd
+                background.fadeIn(ANIMATE_TIME);
+
+                //  Show window
+                transform(wnd, SHOW_PROP);
+
+                //  Toggle scroll bar
+                $('html').toggleClass(NO_OVERFLOW);
+
+                curPopCont = $("." + thisCont);
+
+                curPopCont.toggleClass(NONE);
+            });
+        }
+
+        //--------------------------------------------------
+        //  Close the window and toggle the content
+        //--------------------------------------------------
+        close.click(function(event) {
+
+            //  Hide window
+            transform(wnd, HIDE_PROP);
+
+            //  Toggle scroll bar
+            $("html").toggleClass(NO_OVERFLOW);
+
+            //  Hide backgournd
+            background.fadeOut(ANIMATE_TIME);
+
+            setTimeout(function() {
+                curPopCont.toggleClass(NONE);
+            }, ANIMATE_TIME);
+        });
+
+
+    })();
 });
 
