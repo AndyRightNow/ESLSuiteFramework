@@ -251,7 +251,6 @@ a:hover,
 /********************
   Popped-over window
 *********************/
-
 .popoverbg {
   width: 100vw;
   height: 100vh;
@@ -261,11 +260,9 @@ a:hover,
   top: 0;
   left: 0;
 }
-
 .nooverflow {
   overflow: hidden;
 }
-
 .popoverwnd {
   position: relative;
   width: 60%;
@@ -277,11 +274,16 @@ a:hover,
   -o-transform: translate(-50%, -50%) scale(0, 0);
   -moz-transform: translate(-50%, -50%) scale(0, 0);
 }
-
 .none {
   display: none;
 }
 
+/***********************************
+  Custom carousel: auto fading
+***********************************/
+.opacity0{
+  opacity: 0;
+}
 
 /***********************************
 

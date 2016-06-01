@@ -2,6 +2,12 @@
 
 $(document).ready(() => {
     "use strict";
+    //----------------------------------
+    //  Global constants
+    //----------------------------------
+    const NONE = "none"; //  Display none
+    const OPACITY_0 = "opacity0";
+
     //----------------------------
     //  Utility namespace
     //----------------------------
@@ -118,10 +124,9 @@ $(document).ready(() => {
         //-------------
         const SHOW_PROP = "translate(-50%, -50%) scale(1)"; //  Property used to show the window
         const HIDE_PROP = "translate(-50%, -50%) scale(0)"; //  Property used to hide the window
-        const ANIMATE_TIME = 400;   //  Window animate time
-        const MOBILE_WIDTH = 601;   //  Mobile screen width
-        const NO_OVERFLOW = "nooverflow";   //  No vertical scrolling
-        const NONE = "none";    //  Display none
+        const ANIMATE_TIME = 400; //  Window animate time
+        const MOBILE_WIDTH = 601; //  Mobile screen width
+        const NO_OVERFLOW = "nooverflow"; //  No vertical scrolling
         const POP_CONT_MAX = 50; //  Max popped out window content
 
         //----------------------
@@ -155,8 +160,8 @@ $(document).ready(() => {
         //------------------------
         //  Transform function
         //------------------------
-        function transform(ele, prop){
-            if (typeof ele !== "undefined" && typeof prop !== "undefined"){
+        function transform(ele, prop) {
+            if (typeof ele !== "undefined" && typeof prop !== "undefined") {
                 ele.css("transform", prop);
                 ele.css("-webkit-transform", prop);
                 ele.css("-o-transform", prop);
@@ -177,14 +182,14 @@ $(document).ready(() => {
         //---------------------------------------------
         //  Show the window and append the content
         //---------------------------------------------
-        for (let i = 1; i <= POP_CONT_MAX; i++){
+        for (let i = 1; i <= POP_CONT_MAX; i++) {
             let thisCont = "popcont" + i;
             let thisBtn = "popbtn" + i;
             $("." + thisBtn).click((event) => {
                 //--------------------------
                 //  Mobile compatibility
                 //--------------------------
-                if ($(window).width() < MOBILE_WIDTH){
+                if ($(window).width() < MOBILE_WIDTH) {
                     wnd.css("width", "100vw").css("height", "80vh");
                 }
 
@@ -221,8 +226,68 @@ $(document).ready(() => {
                 curPopCont.toggleClass(NONE);
             }, ANIMATE_TIME);
         });
+    })();
+
+    //--------------------------------------------------
+    // 
+    //  Auto-fade-carousel
+    //
+    //  Usage: Add CSS Class 'auto-fade-item' to items 
+    //  that you want to make carousel. All items should
+    //  have approximately the same height and width and
+    //  they should be in the same HTML element such as
+    //  <div> or <section>
+    //--------------------------------------------------
+    (function() {
+        var items = $(".auto-fade-item"),
+            index = 0, //  Loop index among all items
+            maxHeight = 0;
+
+        const INTERVAL_TIME = 7000, //Time period for setInterval
+            TRANSITION_TIME = 400, //Time period of css transition
+            AUTO_ADJUST_HEIGHT = "auto-adjust-height";
 
 
+        //--------------------------------------------------------
+        //  Add transition. Show the first item and hide others
+        //--------------------------------------------------------
+        items.addClass('transition').addClass('opacity0').addClass('none');
+        $(items[index]).removeClass('none').removeClass('opacity0');
+
+        var autoFadeCarouselInterval = setInterval(() => {
+                //--------------------------------------------------------------
+                //  Set the height of the wrapper to the largest item's height
+                //  if specifying "auto-adjust-height"
+                //--------------------------------------------------------------
+                if (items.parent().hasClass(AUTO_ADJUST_HEIGHT)) {
+                    let thisHeight = $(items[index]).outerHeight();
+                    if (thisHeight > maxHeight) {
+                        maxHeight = thisHeight;
+                        items.parent().css("height", maxHeight * 1.15);
+                    }
+                }
+
+                //  Fade out the current item
+                $(items[index]).addClass(OPACITY_0);
+
+                //------------------------------------
+                //  Display next item after fading
+                //------------------------------------
+                setTimeout(() => {
+                    $(items[index]).addClass(NONE);
+
+                    //  Wrap index with items length
+                    index = (index + 1) % items.length;
+
+                    $(items[index]).removeClass(NONE);
+
+                    setTimeout(() => {
+                        $(items[index]).removeClass(OPACITY_0);
+                    }, TRANSITION_TIME / 2);
+
+                }, TRANSITION_TIME);
+            },
+            INTERVAL_TIME);
     })();
 });
 
