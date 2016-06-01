@@ -284,6 +284,12 @@ a:hover,
 .opacity0{
   opacity: 0;
 }
+/********************************
+  Click to show hidden elements
+*********************************/
+.hiddenitem{
+  display: none;
+}
 
 /***********************************
 

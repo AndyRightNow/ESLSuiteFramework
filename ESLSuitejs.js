@@ -229,6 +229,71 @@ $(document).ready(() => {
     })();
 
     //--------------------------------------------------
+    //
+    //  Show hidden elements
+    //
+    //  Usage: Add CSS class 'hiddenitem' to elements you
+    //  want to hide and show on button click. Add CSS class
+    //  "showhiddenitembtn" to the button you want to bind. Specify how
+    //  many items you want to show on one click by adding
+    //  attribute name "numtoshow" and value to the button element.
+    //  Value can be any number ,"All", "Half", or "Quarter". The default value is "All".
+    //  E.g. numtoshow = "All"
+    //       numtoshow = "1"
+    //
+    //  Note: After all elements are shown, the button will be hidden
+    //--------------------------------------------------
+    (function() {
+        //-------------------------
+        //  Constants
+        //-------------------------
+        const ALL = "All",
+            HALF = "Half",
+            QUARTER = "Quarter";
+        const NUM_TO_SHOW = "numtoshow";
+        const HIDDEN_ITEM = "hiddenitem";
+
+        var hiddenElements = $("." + HIDDEN_ITEM);
+        var showBtn = $(".showhiddenitembtn");
+        var numToShow = ALL;
+
+        //------------------------------------
+        //  Get user specified number to show
+        //------------------------------------
+        var specifiedNumToShow = showBtn.attr(NUM_TO_SHOW);
+        if (typeof specifiedNumToShow !== "undefined") {
+            let thisNum = parseInt(specifiedNumToShow);
+            if (!isNaN(thisNum)) {
+                numToShow = thisNum;
+            }
+            else{
+                switch (specifiedNumToShow){
+                    case HALF:
+                        numToShow = hiddenElements.length / 2;
+                        break;
+                    case QUARTER:
+                        numToShow = hiddenElements.length / 4;
+                        break;
+                }
+            }
+        }
+
+        showBtn.click((event) => {
+            if (hiddenElements.length > 0) {
+                if (numToShow === ALL || hiddenElements.length <= numToShow) {
+                    hiddenElements.removeClass(HIDDEN_ITEM);
+                    showBtn.addClass(NONE);
+                } else {
+                    for (let i = 0; i < numToShow; i++) {
+                        $(hiddenElements[i]).removeClass(HIDDEN_ITEM);
+                    }
+                }
+            }
+            hiddenElements = $("." + HIDDEN_ITEM);
+        });
+    })();
+
+    //--------------------------------------------------
     // 
     //  Auto-fade-carousel
     //
