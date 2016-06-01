@@ -247,47 +247,48 @@ $(document).ready(() => {
             TRANSITION_TIME = 400, //Time period of css transition
             AUTO_ADJUST_HEIGHT = "auto-adjust-height";
 
+        if (items.length > 0) {
+            //--------------------------------------------------------
+            //  Add transition. Show the first item and hide others
+            //--------------------------------------------------------
+            items.addClass('transition').addClass('opacity0').addClass('none');
+            $(items[index]).removeClass('none').removeClass('opacity0');
 
-        //--------------------------------------------------------
-        //  Add transition. Show the first item and hide others
-        //--------------------------------------------------------
-        items.addClass('transition').addClass('opacity0').addClass('none');
-        $(items[index]).removeClass('none').removeClass('opacity0');
-
-        var autoFadeCarouselInterval = setInterval(() => {
-                //--------------------------------------------------------------
-                //  Set the height of the wrapper to the largest item's height
-                //  if specifying "auto-adjust-height"
-                //--------------------------------------------------------------
-                if (items.parent().hasClass(AUTO_ADJUST_HEIGHT)) {
-                    let thisHeight = $(items[index]).outerHeight();
-                    if (thisHeight > maxHeight) {
-                        maxHeight = thisHeight;
-                        items.parent().css("height", maxHeight * 1.15);
+            var autoFadeCarouselInterval = setInterval(() => {
+                    //--------------------------------------------------------------
+                    //  Set the height of the wrapper to the largest item's height
+                    //  if specifying "auto-adjust-height"
+                    //--------------------------------------------------------------
+                    if (items.parent().hasClass(AUTO_ADJUST_HEIGHT)) {
+                        let thisHeight = $(items[index]).outerHeight();
+                        if (thisHeight > maxHeight) {
+                            maxHeight = thisHeight;
+                            items.parent().css("height", maxHeight * 1.15);
+                        }
                     }
-                }
 
-                //  Fade out the current item
-                $(items[index]).addClass(OPACITY_0);
+                    //  Fade out the current item
+                    $(items[index]).addClass(OPACITY_0);
 
-                //------------------------------------
-                //  Display next item after fading
-                //------------------------------------
-                setTimeout(() => {
-                    $(items[index]).addClass(NONE);
-
-                    //  Wrap index with items length
-                    index = (index + 1) % items.length;
-
-                    $(items[index]).removeClass(NONE);
-
+                    //------------------------------------
+                    //  Display next item after fading
+                    //------------------------------------
                     setTimeout(() => {
-                        $(items[index]).removeClass(OPACITY_0);
-                    }, TRANSITION_TIME / 2);
+                        $(items[index]).addClass(NONE);
 
-                }, TRANSITION_TIME);
-            },
-            INTERVAL_TIME);
+                        //  Wrap index with items length
+                        index = (index + 1) % items.length;
+
+                        $(items[index]).removeClass(NONE);
+
+                        setTimeout(() => {
+                            $(items[index]).removeClass(OPACITY_0);
+                        }, TRANSITION_TIME / 2);
+
+                    }, TRANSITION_TIME);
+                },
+                INTERVAL_TIME);
+        }
     })();
 });
 
