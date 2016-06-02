@@ -181,11 +181,22 @@ a:hover,
 
 
 /**********************************
-  Class for scroll show effects
+  Classes for scroll show effects
 ***********************************/
-
 .scrollshow {
   opacity: 0;
+}
+.scrollshow-fadefrombottom{
+  transform: translateY(40%);
+  -webkit-transform: translateY(40%);
+  -o-transform: translateY(40%);
+  -moz-transform: translateY(40%);
+}
+.scrollshow-scalein{
+  transform: scale(0);
+  -webkit-transform: scale(0);
+  -o-transform: scale(0);
+  -moz-transform: scale(0);
 }
 
 

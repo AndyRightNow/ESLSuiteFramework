@@ -7,6 +7,7 @@ $(document).ready(() => {
     //----------------------------------
     const NONE = "none"; //  Display none
     const OPACITY_0 = "opacity0";
+    const MOBILE_WIDTH = 601; //  Mobile screen width
 
     //----------------------------
     //  Utility namespace
@@ -36,31 +37,50 @@ $(document).ready(() => {
             if (typeof jqueryObject !== "undefined" && typeof styleStr !== "undefined") {
                 jqueryObject.attr('style', styleStr);
             }
+        },
+
+        //-------------------------------
+        //  Check if it's mobile version
+        //-------------------------------
+        isMobile: function() {
+            return $(window).width() <= MOBILE_WIDTH;
         }
     };
 
-    //-----------------------------------
+    //--------------------------------------------------------------------------------
     //
     //  Scroll to show 
     //
     //  Usage: Add CSS Class "scrollshow"
     //  (case sensitive) to the HTML element
-    //  you want to animate.
+    //  you want to scroll to show. When the bottom
+    //  of the window goes past the bottom (middle line in mobile) of the element
+    //  , the element will show in effect specified.
     //
-    //-----------------------------------
+    //  Effect: The default effect is fadeing in without specific direction. 
+    //          Effects available: "scrollshow-fadefrombottom"
+    //                             "scrollshow-scalein"
+    //  Note: 1. You can not use effects without adding "scrollshow"
+    //        2. You can only use one effect class at a time.
+    //--------------------------------------------------------------------------------
     (function() {
+        const FADE_FROM_BOTTOM = "scrollshow-fadefrombottom";
+        const SCALE_IN = "scrollshow-scalein";
+        const SCROLL_SHOW = 'scrollshow';
+
+        const TRANSITION_TIME = 600; //Transition time in millisecond
+        const TRANSITION_TIME_IN_SEC = TRANSITION_TIME / 1000; //Transition time in second
+
+        const TRANSITION_OBJECT = { //CSS Class object for showing element
+            "transition": "all " + TRANSITION_TIME_IN_SEC + "s ease-in-out",
+            "-webkit-transition": "all " + TRANSITION_TIME_IN_SEC + "s ease-in-out",
+            "-o-transition": "all " + TRANSITION_TIME_IN_SEC + "s ease-in-out",
+            "-moz-transition": "all " + TRANSITION_TIME_IN_SEC + "s ease-in-out"
+        };
+
         $(window).scroll(function(event) {
-            var transitionTime = 600; //Transition time in millisecond
-            var transTimeInSec = transitionTime / 1000; //Transition time in second
 
-            var transition = { //CSS Class object for showing element
-                "transition": "opacity " + transTimeInSec + "s ease-in-out",
-                "-webkit-transition": "opacity " + transTimeInSec + "s ease-in-out",
-                "-o-transition": "opacity " + transTimeInSec + "s ease-in-out",
-                "-moz-transition": "opacity " + transTimeInSec + "s ease-in-out"
-            };
-
-            var elements = Array.from($(".scrollshow"));
+            var elements = Array.from($("." + SCROLL_SHOW));
             var currElem = elements.shift();
 
             if (currElem !== undefined) {
@@ -70,12 +90,23 @@ $(document).ready(() => {
                 if (windowBottom >= curEleBottom) {
                     let styleStr = Utility.storeInlineCSS($(currElem)); // Store the inline css style
 
-                    Utility.addCSS($(currElem), transition);
-                    $(currElem).removeClass('scrollshow');
+                    Utility.addCSS($(currElem), TRANSITION_OBJECT); //Add css transition to elements
+
+                    $(currElem).removeClass(SCROLL_SHOW); //Show default effect
+
+                    //------------------
+                    //  Switch effects
+                    //------------------
+                    if ($(currElem).hasClass(FADE_FROM_BOTTOM)) {
+                        $(currElem).removeClass(FADE_FROM_BOTTOM);
+                    } else if ($(currElem).hasClass(SCALE_IN)) {
+                        $(currElem).removeClass(SCALE_IN);
+                    }
+
 
                     setTimeout(function() { //After the animation, restore the inline style
                         Utility.restoreInlineCSS($(currElem), styleStr);
-                    }, transitionTime - 1);
+                    }, TRANSITION_TIME - 1);
                 }
             }
         });
@@ -116,6 +147,11 @@ $(document).ready(() => {
     //  to the button that triggers popped-out window.
     //  Add CSS Class 'popovercontent' to the outermost
     //  HTML element of your content in popped-out window.
+    //  Add CSS class "popcont1" to "popcont50" and "popbtn1" to "popobtn50"
+    //  respectively to the corresponding contents and buttons.
+    //  
+    //  Add CSS Class "popbtn-nomobile" to the button you want to disable
+    //  pop over window on mobile.
     //
     //---------------------------------------------------
     (function() {
@@ -125,9 +161,9 @@ $(document).ready(() => {
         const SHOW_PROP = "translate(-50%, -50%) scale(1)"; //  Property used to show the window
         const HIDE_PROP = "translate(-50%, -50%) scale(0)"; //  Property used to hide the window
         const ANIMATE_TIME = 400; //  Window animate time
-        const MOBILE_WIDTH = 601; //  Mobile screen width
         const NO_OVERFLOW = "nooverflow"; //  No vertical scrolling
         const POP_CONT_MAX = 50; //  Max popped out window content
+        const NO_MOBILE = "popbtn-nomobile";
 
         //----------------------
         //  Build HTML
@@ -185,26 +221,40 @@ $(document).ready(() => {
         for (let i = 1; i <= POP_CONT_MAX; i++) {
             let thisCont = "popcont" + i;
             let thisBtn = "popbtn" + i;
+
+            //  Hide all the content
+            $("." + thisCont).addClass(NONE);
+
             $("." + thisBtn).click((event) => {
-                //--------------------------
-                //  Mobile compatibility
-                //--------------------------
-                if ($(window).width() < MOBILE_WIDTH) {
+                //---------------------------------------------------
+                //  Adjust the size of the pop over window on mobile
+                //---------------------------------------------------
+                if (Utility.isMobile()) {
                     wnd.css("width", "100vw").css("height", "80vh");
                 }
 
-                //  Show backgournd
-                background.fadeIn(ANIMATE_TIME);
+                //------------------------------------------------------------
+                //  Prevent default action and show the window when
+                //  1. Not on mobile
+                //  2. On mobile and "popbtn-nomobile" not specified for the button
+                //------------------------------------------------------------
+                if (!Utility.isMobile() ||
+                    Utility.isMobile() && !$("." + thisBtn).hasClass(NO_MOBILE)) {
+                    event.preventDefault();
 
-                //  Show window
-                transform(wnd, SHOW_PROP);
+                    //  Show backgournd
+                    background.fadeIn(ANIMATE_TIME);
 
-                //  Toggle scroll bar
-                $('html').toggleClass(NO_OVERFLOW);
+                    //  Show window
+                    transform(wnd, SHOW_PROP);
 
-                curPopCont = $("." + thisCont);
+                    //  Toggle scroll bar
+                    $('html').toggleClass(NO_OVERFLOW);
 
-                curPopCont.toggleClass(NONE);
+                    curPopCont = $("." + thisCont);
+
+                    curPopCont.toggleClass(NONE);
+                }
             });
         }
 
@@ -265,9 +315,8 @@ $(document).ready(() => {
             let thisNum = parseInt(specifiedNumToShow);
             if (!isNaN(thisNum)) {
                 numToShow = thisNum;
-            }
-            else{
-                switch (specifiedNumToShow){
+            } else {
+                switch (specifiedNumToShow) {
                     case HALF:
                         numToShow = hiddenElements.length / 2;
                         break;
