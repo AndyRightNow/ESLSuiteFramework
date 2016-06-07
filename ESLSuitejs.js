@@ -404,5 +404,50 @@ $(document).ready(() => {
                 INTERVAL_TIME);
         }
     })();
+
+    //--------------------------------------------------
+    // 
+    //  Responsive element height
+    //
+    //  Usage: Add attribute to a HTML element: 
+    //  1. adaptheight = "Sibling-n" means setting the height
+    //  of the element to the height of its nth sibling
+    //  e.g. "Sibling-1" 
+    //
+    //  
+    //--------------------------------------------------
+    (function() {
+        //------------------------
+        //  Adapt height targets
+        //------------------------
+        const SIBLING = "Sibling";
+
+        var ResponsiveElementHeightInterval = setInterval(() => {
+            let elements = $("[adaptheight]");
+            if (typeof elements === "undefined") {  //  Check if elements with the attribute don't exist
+                clearInterval(ResponsiveElementHeightInterval);
+            }
+
+            let isAllInvalid = true;    //  Flag used to check if there is at least one valid attribute value
+            for (let i = 0; i < elements.length; i++) { //  Use native for loop to make the loop within this scope
+                let thisAttr = $(elements[i]).attr('adaptheight');
+                if (typeof thisAttr !== "undefined") {
+                    if (thisAttr.substr(0, SIBLING.length) === SIBLING) { 
+                        let num = parseInt(thisAttr[thisAttr.length - 1]);
+                        if (!isNaN(num)) {
+                            let thisSibling = $(elements[i]).siblings()[num - 1];
+                            if (typeof thisSibling !== "undefined") {
+                                isAllInvalid = false;
+                                $(elements[i]).css("height", $(thisSibling).height());
+                            }
+                        }
+                    }
+                }
+            }
+            if (isAllInvalid) {
+                clearInterval(ResponsiveElementHeightInterval);
+            }
+        });
+    })();
 });
 
