@@ -286,10 +286,10 @@ $(document).ready(() => {
     //  want to hide and show on button click. Add CSS class
     //  "showhiddenitembtn" to the button you want to bind. Specify how
     //  many items you want to show on one click by adding
-    //  attribute name "numtoshow" and value to the button element.
+    //  attribute name "num-to-show" and value to the button element.
     //  Value can be any number ,"All", "Half", or "Quarter". The default value is "All".
-    //  E.g. numtoshow = "All"
-    //       numtoshow = "1"
+    //  E.g. num-to-show = "All"
+    //       num-to-show = "1"
     //
     //  Note: After all elements are shown, the button will be hidden
     //--------------------------------------------------
@@ -300,7 +300,7 @@ $(document).ready(() => {
         const ALL = "All",
             HALF = "Half",
             QUARTER = "Quarter";
-        const NUM_TO_SHOW = "numtoshow";
+        const NUM_TO_SHOW = "num-to-show";
         const HIDDEN_ITEM = "hiddenitem";
 
         var hiddenElements = $("." + HIDDEN_ITEM);
@@ -424,15 +424,15 @@ $(document).ready(() => {
 
         var ResponsiveElementHeightInterval = setInterval(() => {
             let elements = $("[adaptheight]");
-            if (typeof elements === "undefined") {  //  Check if elements with the attribute don't exist
+            if (typeof elements === "undefined") { //  Check if elements with the attribute don't exist
                 clearInterval(ResponsiveElementHeightInterval);
             }
 
-            let isAllInvalid = true;    //  Flag used to check if there is at least one valid attribute value
+            let isAllInvalid = true; //  Flag used to check if there is at least one valid attribute value
             for (let i = 0; i < elements.length; i++) { //  Use native for loop to make the loop within this scope
                 let thisAttr = $(elements[i]).attr('adaptheight');
                 if (typeof thisAttr !== "undefined") {
-                    if (thisAttr.substr(0, SIBLING.length) === SIBLING) { 
+                    if (thisAttr.substr(0, SIBLING.length) === SIBLING) {
                         let num = parseInt(thisAttr[thisAttr.length - 1]);
                         if (!isNaN(num)) {
                             let thisSibling = $(elements[i]).siblings()[num - 1];
@@ -448,6 +448,147 @@ $(document).ready(() => {
                 clearInterval(ResponsiveElementHeightInterval);
             }
         });
+    })();
+
+    //--------------------------------------------------
+    // 
+    //  UTC Count Down Timer
+    //
+    //  Usage: Add CSS class "countdown" to the outer wrapper
+    //  of the count down time elements.Add CSS class "countdownyear", 
+    //  "countdownmonth", "countdownday", "countdownhour", "countdownminute" or 
+    //  "countdownsecond" to the corresponding HTML element to
+    //  show the count down time. Set attribute value 
+    //  "count-down-start = 'Mon DD, YYYY'"", "count-down-end = 'Mon DD, YYYY'"(e.g. "Dec 25, 1995"),
+    //  "timezone = '+/-n'" and "countdownstate = 'On/Off'" of the 
+    //  element with "countdown" class to control the countdown. 
+    //  The last two parameters are optional, and if not set, 
+    //  they will be "+0" and "On" by default.
+    //  
+    //--------------------------------------------------
+    (function() {
+        //-------------------------------------------
+        //  Count down display class names constants
+        //-------------------------------------------
+        const COUNT_DOWN_YEAR = "countdownyear";
+        const COUNT_DOWN_MONTH = "countdownmonth";
+        const COUNT_DOWN_DAY = "countdownday";
+        const COUNT_DOWN_HOUR = "countdownhour";
+        const COUNT_DOWN_MINUTE = "countdownminute";
+        const COUNT_DOWN_SECOND = "countdownsecond";
+
+        //---------------------------------
+        //  Conversion constants
+        //---------------------------------
+        const YEAR_SEC = 31536000;
+        const MONTH_SEC = 2592000;
+        const DAY_SEC = 86400;
+        const HOUR_SEC = 3600;
+        const MIN_SEC = 60;
+
+        //---------------------------------------------------------------------------
+        //  UTC date variables and a helper function used to get current UTC date
+        //---------------------------------------------------------------------------
+        var date, UTCYear, UTCMonth, UTCDate, UTCHour, UTCMin, UTCSec, UTCTimeInMillisec;
+        function getThisUTCTime() {
+            date = new Date();
+            UTCYear = date.getUTCFullYear();
+            UTCMonth = date.getUTCMonth();
+            UTCDate = date.getUTCDate();
+            UTCHour = date.getUTCHours();
+            UTCMin = date.getUTCMinutes();
+            UTCSec = date.getUTCSeconds();
+            UTCTimeInMillisec = Date.UTC(UTCYear, UTCMonth, UTCDate, UTCHour, UTCMin, UTCSec);
+        }
+
+        //-----------------------------------------------------------------
+        //  Helper function to convert seconds to different parts of time
+        //  Return: an object of 6 members: year, month, day, hour, min, sec 
+        //-----------------------------------------------------------------
+        function convertTime(time){
+            var y = parseInt(time / YEAR_SEC);
+            time -= (y * YEAR_SEC);
+
+            var mo = parseInt(time / MONTH_SEC);
+            time -= (mo * MONTH_SEC);
+
+            var d = parseInt(time / DAY_SEC);
+            time -= (d * DAY_SEC);
+
+            var h = parseInt(time / HOUR_SEC);
+            time -= (h * HOUR_SEC);
+
+            var m = parseInt(time / MIN_SEC);
+            time -= (m * MIN_SEC);
+
+            var s = time;
+
+            return {
+                year: y,
+                month: mo, 
+                day: d,
+                hour: h,
+                min: m,
+                sec: s
+            };
+        }
+
+        var countDownWrapper = $(".countdown"); //  Wrapper class
+
+        if (typeof countDownWrapper !== "undefined") {
+
+            //-----------------------------------
+            //  Init all timer display elements
+            //-----------------------------------
+            $("." + COUNT_DOWN_YEAR).text("0");
+            $("." + COUNT_DOWN_MONTH).text("0");
+            $("." + COUNT_DOWN_DAY).text("0");
+            $("." + COUNT_DOWN_HOUR).text("0");
+            $("." + COUNT_DOWN_MINUTE).text("0");
+            $("." + COUNT_DOWN_SECOND).text("0");
+
+            //--------------------------------------------------
+            //  Count down start and end dates in milliseconds
+            //--------------------------------------------------
+            let countDownStart = Date.parse(countDownWrapper.attr("count-down-start"));
+            let countDownEnd = Date.parse(countDownWrapper.attr("count-down-end"));
+
+            if (!isNaN(countDownStart) &&
+                !isNaN(countDownEnd)) {
+
+                let timeZone = countDownWrapper.attr("timezone");
+                if (!isNaN(parseInt(timeZone))) {
+                    timeZone = parseInt(timeZone);
+                    if (timeZone > 12 || timeZone < -12) {
+                        timeZone = 0;
+                    }
+                } else {
+                    timeZone = 0;
+                }
+
+                let countDownState = countDownWrapper.attr("countdownstate");
+                countDownState = typeof countDownState === "undefined" ||
+                    (countDownState != "On" &&
+                        countDownState != "Off") ?
+                    "On" : countDownState === "On" ? true : false;
+
+                getThisUTCTime();
+                if (UTCTimeInMillisec < countDownStart ||
+                    UTCTimeInMillisec > countDownEnd){
+                    countDownState = false;
+                }
+
+
+                if (countDownState) {
+                    var CountDownTimerInterval = setInterval(() => {
+                        getThisUTCTime();
+                        var timeDifPeroidInSec = (countDownEnd - UTCTimeInMillisec) / 1000;
+
+                        var converted = convertTime(timeDifPeroidInSec);
+                    });
+                }
+            }
+        }
     })();
 });
 
