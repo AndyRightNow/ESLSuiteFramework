@@ -454,14 +454,14 @@ $(document).ready(() => {
     // 
     //  UTC Count Down Timer
     //
-    //  Usage: Add CSS class "countdown" to the outer wrapper
-    //  of the count down time elements.Add CSS class "countdownyear", 
-    //  "countdownmonth", "countdownday", "countdownhour", "countdownminute" or 
-    //  "countdownsecond" to the corresponding HTML element to
+    //  Usage: Add CSS class "count-down" to the outer wrapper
+    //  of the count down time elements.Add CSS class "count-down-year", 
+    //  "count-down-month", "count-down-day", "count-down-hour", "count-down-minute" or 
+    //  "count-down-second" to the corresponding HTML element to
     //  show the count down time. Set attribute value 
     //  "count-down-start = 'Mon DD, YYYY'"", "count-down-end = 'Mon DD, YYYY'"(e.g. "Dec 25, 1995"),
-    //  "timezone = '+/-n'" and "countdownstate = 'On/Off'" of the 
-    //  element with "countdown" class to control the countdown. 
+    //  "timezone = '+/-n'" and "count-down-state = 'On/Off'" of the 
+    //  element with "count-down" class to control the count down. 
     //  The last two parameters are optional, and if not set, 
     //  they will be "+0" and "On" by default.
     //  
@@ -470,12 +470,25 @@ $(document).ready(() => {
         //-------------------------------------------
         //  Count down display class names constants
         //-------------------------------------------
-        const COUNT_DOWN_YEAR = "countdownyear";
-        const COUNT_DOWN_MONTH = "countdownmonth";
-        const COUNT_DOWN_DAY = "countdownday";
-        const COUNT_DOWN_HOUR = "countdownhour";
-        const COUNT_DOWN_MINUTE = "countdownminute";
-        const COUNT_DOWN_SECOND = "countdownsecond";
+        const COUNT_DOWN_YEAR = "count-down-year";
+        const COUNT_DOWN_MONTH = "count-down-month";
+        const COUNT_DOWN_DAY = "count-down-day";
+        const COUNT_DOWN_HOUR = "count-down-hour";
+        const COUNT_DOWN_MINUTE = "count-down-minute";
+        const COUNT_DOWN_SECOND = "count-down-second";
+        const COUNT_DOWN_YEAR_CLASS = ".count-down-year";
+        const COUNT_DOWN_MONTH_CLASS = ".count-down-month";
+        const COUNT_DOWN_DAY_CLASS = ".count-down-day";
+        const COUNT_DOWN_HOUR_CLASS = ".count-down-hour";
+        const COUNT_DOWN_MINUTE_CLASS = ".count-down-minute";
+        const COUNT_DOWN_SECOND_CLASS = ".count-down-second";
+
+        const COUNT_DOWN_STATE_ATTR = "count-down-state";
+        const COUNT_DOWN_START_ATTR = "count-down-start";
+        const COUNT_DOWN_END_ATTR = "count-down-end";
+        const TIME_ZONE_ATTR = "time-zone";
+
+        const COUNT_DOWN_WRAPPER_CLASS = ".count-down";
 
         //---------------------------------
         //  Conversion constants
@@ -503,9 +516,9 @@ $(document).ready(() => {
 
         //-----------------------------------------------------------------
         //  Helper function to convert seconds to different parts of time
-        //  Return: an object of 6 members: year, month, day, hour, min, sec 
+        //  Return: an object with 6 members: year, month, day, hour, min, sec 
         //-----------------------------------------------------------------
-        function convertTime(time){
+        function extractTime(time){
             var y = parseInt(time / YEAR_SEC);
             time -= (y * YEAR_SEC);
 
@@ -528,35 +541,39 @@ $(document).ready(() => {
                 month: mo, 
                 day: d,
                 hour: h,
-                min: m,
-                sec: s
+                minute: m,
+                second: s
             };
         }
 
-        var countDownWrapper = $(".countdown"); //  Wrapper class
+        var countDownWrapper = $(COUNT_DOWN_WRAPPER_CLASS); //  Wrapper class
 
         if (typeof countDownWrapper !== "undefined") {
 
             //-----------------------------------
             //  Init all timer display elements
             //-----------------------------------
-            $("." + COUNT_DOWN_YEAR).text("0");
-            $("." + COUNT_DOWN_MONTH).text("0");
-            $("." + COUNT_DOWN_DAY).text("0");
-            $("." + COUNT_DOWN_HOUR).text("0");
-            $("." + COUNT_DOWN_MINUTE).text("0");
-            $("." + COUNT_DOWN_SECOND).text("0");
+            $(COUNT_DOWN_YEAR_CLASS).text("0");
+            $(COUNT_DOWN_MONTH_CLASS).text("0");
+            $(COUNT_DOWN_DAY_CLASS).text("0");
+            $(COUNT_DOWN_HOUR_CLASS).text("0");
+            $(COUNT_DOWN_MINUTE_CLASS).text("0");
+            $(COUNT_DOWN_SECOND_CLASS).text("0");
 
             //--------------------------------------------------
             //  Count down start and end dates in milliseconds
             //--------------------------------------------------
-            let countDownStart = Date.parse(countDownWrapper.attr("count-down-start"));
-            let countDownEnd = Date.parse(countDownWrapper.attr("count-down-end"));
+            let countDownStart = Date.parse(countDownWrapper.attr(COUNT_DOWN_START_ATTR));
+            let countDownEnd = Date.parse(countDownWrapper.attr(COUNT_DOWN_END_ATTR));
 
             if (!isNaN(countDownStart) &&
                 !isNaN(countDownEnd)) {
 
-                let timeZone = countDownWrapper.attr("timezone");
+                //-----------------------------------------------
+                //  Get time zone information specified by user
+                //  If unspecified or invalid, set time zone to 0
+                //-----------------------------------------------
+                let timeZone = countDownWrapper.attr(TIME_ZONE_ATTR);
                 if (!isNaN(parseInt(timeZone))) {
                     timeZone = parseInt(timeZone);
                     if (timeZone > 12 || timeZone < -12) {
@@ -566,7 +583,11 @@ $(document).ready(() => {
                     timeZone = 0;
                 }
 
-                let countDownState = countDownWrapper.attr("countdownstate");
+                //------------------------------------------
+                //  Get count down state specified by user
+                //  If unpecified or invalid, set state to on
+                //------------------------------------------
+                let countDownState = countDownWrapper.attr(COUNT_DOWN_STATE_ATTR);
                 countDownState = typeof countDownState === "undefined" ||
                     (countDownState != "On" &&
                         countDownState != "Off") ?
@@ -577,14 +598,32 @@ $(document).ready(() => {
                     UTCTimeInMillisec > countDownEnd){
                     countDownState = false;
                 }
+                countDownWrapper.attr(COUNT_DOWN_STATE_ATTR, countDownState ? "On" : "Off");
 
-
+                //-------------------------------------
+                //  Start and show the count down if the
+                //  state is on
+                //-------------------------------------
                 if (countDownState) {
                     var CountDownTimerInterval = setInterval(() => {
+                        //  Side effect function to update current stored UTC time
                         getThisUTCTime();
+
+                        //  Time period between current time and end time in seconds
                         var timeDifPeroidInSec = (countDownEnd - UTCTimeInMillisec) / 1000;
 
-                        var converted = convertTime(timeDifPeroidInSec);
+                        //  Extract years, months, days, minutes and seconds from the seconds period
+                        var extractedTime = extractTime(timeDifPeroidInSec);
+
+                        //--------------------------------------
+                        //  Show the time
+                        //--------------------------------------
+                        $(COUNT_DOWN_YEAR_CLASS).text(extractedTime.year);
+                        $(COUNT_DOWN_MONTH_CLASS).text(extractedTime.month);
+                        $(COUNT_DOWN_DAY_CLASS).text(extractedTime.day);
+                        $(COUNT_DOWN_HOUR_CLASS).text(extractedTime.hour);
+                        $(COUNT_DOWN_MINUTE_CLASS).text(extractedTime.minute);
+                        $(COUNT_DOWN_SECOND_CLASS).text(extractedTime.second);
                     });
                 }
             }
