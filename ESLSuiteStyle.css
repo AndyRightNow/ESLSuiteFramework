@@ -295,6 +295,18 @@ a:hover,
 .opacity0{
   opacity: 0;
 }
+
+/***********************************
+  Custom carousel: draggable carousel
+***********************************/
+.draggable-carousel{
+  overflow: hidden;
+}
+.draggable-carousel-item{
+  display: inline-block;
+  vertical-align: middle;
+}
+
 /********************************
   Click to show hidden elements
 *********************************/

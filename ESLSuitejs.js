@@ -44,14 +44,17 @@ $(document).ready(() => {
         //-------------------------------
         isMobile: function() {
             return $(window).width() <= MOBILE_WIDTH;
-        }
+        },
+
     };
 
     //--------------------------------------------------------------------------------
     //
     //  Scroll to show 
     //
-    //  Usage: Add CSS Class "scrollshow"
+    //  Usage: 
+    //  
+    //  Add CSS Class "scrollshow"
     //  (case sensitive) to the HTML element
     //  you want to scroll to show. When the bottom
     //  of the window goes past the bottom (middle line in mobile) of the element
@@ -116,7 +119,9 @@ $(document).ready(() => {
     //
     //  Scroll to internal link
     //
-    //  Usage: Add CSS Class "scrolllink"
+    //  Usage: 
+    //  
+    //  Add CSS Class "scrolllink"
     //  (case sensitive) to the HTML element
     //  you want to animate.
     //
@@ -143,7 +148,9 @@ $(document).ready(() => {
     //
     //  Popped-out window
     //
-    //  Usage: Add CSS Class 'popoverbtn'
+    //  Usage: 
+    //  
+    //  Add CSS Class 'popoverbtn'
     //  to the button that triggers popped-out window.
     //  Add CSS Class 'popovercontent' to the outermost
     //  HTML element of your content in popped-out window.
@@ -282,7 +289,9 @@ $(document).ready(() => {
     //
     //  Show hidden elements
     //
-    //  Usage: Add CSS class 'hiddenitem' to elements you
+    //  Usage: 
+    //  
+    //  Add CSS class 'hiddenitem' to elements you
     //  want to hide and show on button click. Add CSS class
     //  "showhiddenitembtn" to the button you want to bind. Specify how
     //  many items you want to show on one click by adding
@@ -346,11 +355,15 @@ $(document).ready(() => {
     // 
     //  Auto-fade-carousel
     //
-    //  Usage: Add CSS Class 'auto-fade-item' to items 
+    //  Usage: 
+    //  
+    //  Add CSS Class 'auto-fade-item' to items 
     //  that you want to make carousel. All items should
     //  have approximately the same height and width and
     //  they should be in the same HTML element such as
-    //  <div> or <section>
+    //  <div> or <section>. Add CSS class "auto-adjust-height" to
+    //  the wrapper of items can adjust the height of the wrapper 
+    //  to the largest element of the items.
     //--------------------------------------------------
     (function() {
         var items = $(".auto-fade-item"),
@@ -409,7 +422,9 @@ $(document).ready(() => {
     // 
     //  Responsive element height
     //
-    //  Usage: Add attribute to a HTML element: 
+    //  Usage: 
+    //  
+    //  Add attribute to a HTML element: 
     //  1. adaptheight = "Sibling-n" means setting the height
     //  of the element to the height of its nth sibling
     //  e.g. "Sibling-1" 
@@ -454,12 +469,16 @@ $(document).ready(() => {
     // 
     //  UTC Count Down Timer
     //
-    //  Usage: Add CSS class "count-down" to the outer wrapper
+    //  Usage: 
+    //  
+    //  Add CSS class "count-down" to the outer wrapper
     //  of the count down time elements.Add CSS class "count-down-year", 
     //  "count-down-month", "count-down-day", "count-down-hour", "count-down-minute" or 
     //  "count-down-second" to the corresponding HTML element to
-    //  show the count down time. Set attribute value 
-    //  "count-down-start = 'Mon DD, YYYY'"", "count-down-end = 'Mon DD, YYYY'"(e.g. "Dec 25, 1995"),
+    //  show the count down time. 
+    //
+    //  Set attribute value "count-down-start = 'Mon DD, YYYY'"", 
+    //  "count-down-end = 'Mon DD, YYYY'"(e.g. "Dec 25, 1995"),
     //  "timezone = '+/-n'" and "count-down-state = 'On/Off'" of the 
     //  element with "count-down" class to control the count down. 
     //  The last two parameters are optional, and if not set, 
@@ -626,6 +645,134 @@ $(document).ready(() => {
                         $(COUNT_DOWN_SECOND_CLASS).text(extractedTime.second);
                     });
                 }
+            }
+        }
+    })();
+
+    //--------------------------------------------------
+    // 
+    //  Draggable carousel
+    //
+    //  Usage: 
+    //  
+    //  Add CSS class "draggable-carousel" to the 
+    //  wrapper of carousel items and add "draggable-carousel-item" to the 
+    //  items of carousel. Items should be of the same width
+    //  and height. 
+    //  
+    //  Add CSS class "carousel-control-left" and "carousel-control-right"
+    //  to elements you want to use as left and right control for the 
+    //  carousel. It will shift to left/right for 1 element for every click.
+    //
+    //  Set attribute "carousel-auto-play='On'" in the wrapper "draggable-carousel"  
+    //  to enable auto playing, and "Off" to disable. The default value is "Off".
+    //
+    //--------------------------------------------------
+    (function(){
+        //-------------------------
+        //  Names constants
+        //-------------------------
+        const DRAGGABLE_CAROUSEL_WRAPPER_CALSS = ".draggable-carousel";
+        const DRAGGABLE_CAROUSEL_INNER_WRAPPER_CALSS = ".draggable-carouse-inner";
+        const DRAGGABLE_CAROUSEL_ITEM_CALSS = ".draggable-carousel-item";
+        const CAROUSEL_AUTO_PLAY_ATTR = "carousel-auto-play";
+
+        //--------------------------------------------
+        //  Function scoped variables declarations
+        //--------------------------------------------
+        var draggableCarouselInnerWrapper,
+            draggableCarouselWrapper,
+            carouselItems;
+
+        //  Flag to record if the mouse events are bound
+        var isEventBound = false;
+        //  Flags to record mouse states
+        var mouseUp, mouseDown, mouseIn, mouseOut, mouseMove;
+        //-------------------------------------------
+        //  Bind event listener to the carousel items
+        //-------------------------------------------
+         function bindMouseEvents(){
+            if (!isEventBound){
+                let objectsToBind = carouselItems;
+                if (typeof objectsToBind !== "undefined"){
+                    objectsToBind.find('*').css("pointer-events", "none");
+                    objectsToBind.mouseenter(() => {    mouseIn = true;     });
+                    objectsToBind.mouseout(() => {    mouseIn = false;     });
+                    objectsToBind.mousemove(() => {    mouseMove = true;     });
+                    objectsToBind.mousedown(() => {    mouseDown = true;mouseUp = false;     });
+                    objectsToBind.mouseup(() => {    mouseUp = true;mouseDown = false;     });
+                    isEventBound = true;
+                }
+            }
+        }
+
+        //  Handle to the draggable carousel wrapper
+        draggableCarouselWrapper = $(DRAGGABLE_CAROUSEL_WRAPPER_CALSS);
+
+        if (typeof draggableCarouselWrapper !== "undefined"){
+            //  Handle to the draggable carousel items array
+            carouselItems = draggableCarouselWrapper.find(DRAGGABLE_CAROUSEL_ITEM_CALSS);
+
+            if (typeof carouselItems !== "undefined"){
+                //  Get max elements that the wrapper can show
+                let maxElementsToShow = parseInt(draggableCarouselWrapper.width() / carouselItems.width());
+
+                //------------------------------------
+                //  Create a inner wrapper for items
+                //------------------------------------
+                let innerWrapper = "<div class='draggable-carouse-inner'></div>";
+                $(innerWrapper).prependTo(DRAGGABLE_CAROUSEL_WRAPPER_CALSS);
+
+                //  Handle to the inner items wrapper
+                draggableCarouselInnerWrapper = $(DRAGGABLE_CAROUSEL_INNER_WRAPPER_CALSS);
+
+                //---------------------------------------
+                //  Check if auto-playing is specified
+                //---------------------------------------
+                let isAutoPlay = draggableCarouselWrapper.attr(CAROUSEL_AUTO_PLAY_ATTR);
+                isAutoPlay = typeof isAutoPlay === "undefined" || isAutoPlay == "Off" ? 
+                                false : isAutoPlay === "On" ? true : false;
+
+                if (isAutoPlay){
+                    //------------------------------------------------------------------------------------
+                    //  Copy the first maxElementsToShow elements to append to the end of the wrapper
+                    //------------------------------------------------------------------------------------
+                    for (let i = 0; i < maxElementsToShow; i++){
+                        $(carouselItems[i]).clone().appendTo(draggableCarouselWrapper);
+                    }
+
+                    //  Update the handle to items
+                    carouselItems = $(DRAGGABLE_CAROUSEL_ITEM_CALSS);
+                }
+
+                //-----------------------------------------
+                //  Set CSS of the inner wrapper 
+                //-----------------------------------------
+                let itemsWidthSum = carouselItems.width() * carouselItems.length; // Adding width of all elements together
+                let innerWrapperCSS = {
+                    "width": itemsWidthSum * 1.5,    // Leave extra 50% width
+                    "position": "relative",
+                    "left": 0,
+                    "top": "50%",
+                    "transform": "translateY(-50%)",
+                    "-webkit-transform": "translateY(-50%)",
+                    "-o-transform": "translateY(-50%)",
+                    "-moz-transform": "translateY(-50%)",
+                    "z-index": 100,
+                };
+                Utility.addCSS(draggableCarouselInnerWrapper, innerWrapperCSS);
+
+                //----------------------------
+                //  Main carousel event loop
+                //----------------------------
+                bindMouseEvents();
+                var draggableCarouselEventLoop = setInterval(() => {
+                    console.log(mouseMove);
+                    mouseMove = false;
+                });
+
+                //  Move items into the inner wrapper
+                carouselItems.appendTo(DRAGGABLE_CAROUSEL_INNER_WRAPPER_CALSS);
             }
         }
     })();
