@@ -46,6 +46,13 @@ $(document).ready(() => {
             return $(window).width() <= MOBILE_WIDTH;
         },
 
+        //---------------------------------------------
+        //  Check if a number is within certain range
+        //---------------------------------------------
+        isInRange: function(number, rangeLow, rangeHigh){
+            return number >= rangeLow && number <= rangeHigh;
+        }
+
     };
 
     //--------------------------------------------------------------------------------
@@ -669,6 +676,14 @@ $(document).ready(() => {
     //
     //--------------------------------------------------
     (function(){
+        //----------------------
+        //  Position object
+        //----------------------
+        var Position = function(x, y){
+            this.x = x;
+            this.y = y;
+        };
+
         //-------------------------
         //  Names constants
         //-------------------------
@@ -688,6 +703,14 @@ $(document).ready(() => {
         var isEventBound = false;
         //  Flags to record mouse states
         var mouseUp, mouseDown, mouseIn, mouseOut, mouseMove;
+        //  Mouse positions
+        var lastMousePos = new Position(0, 0), currentMousePos = new Position(0, 0);
+
+        //  Function to check if mouse is moving
+        function isMouseMove(){
+            return currentMousePos.x != lastMousePos.x || currentMousePos.y != lastMousePos.y;
+        }
+
         //-------------------------------------------
         //  Bind event listener to the carousel items
         //-------------------------------------------
@@ -698,7 +721,6 @@ $(document).ready(() => {
                     objectsToBind.find('*').css("pointer-events", "none");
                     objectsToBind.mouseenter(() => {    mouseIn = true;     });
                     objectsToBind.mouseout(() => {    mouseIn = false;     });
-                    objectsToBind.mousemove(() => {    mouseMove = true;     });
                     objectsToBind.mousedown(() => {    mouseDown = true;mouseUp = false;     });
                     objectsToBind.mouseup(() => {    mouseUp = true;mouseDown = false;     });
                     isEventBound = true;
@@ -758,17 +780,34 @@ $(document).ready(() => {
                     "-webkit-transform": "translateY(-50%)",
                     "-o-transform": "translateY(-50%)",
                     "-moz-transform": "translateY(-50%)",
-                    "z-index": 100,
                 };
                 Utility.addCSS(draggableCarouselInnerWrapper, innerWrapperCSS);
 
+                //-------------------------------
+                //  Carousel draggable event
+                //-------------------------------
+                draggableCarouselInnerWrapper.mousemove((event) => {
+                    if (mouseIn && mouseDown){
+                        lastMousePos.x = currentMousePos.x;
+                        lastMousePos.y = currentMousePos.y;
+                        currentMousePos.x = event.pageX;
+                        currentMousePos.y = event.pageY;        
+                    }
+                });
+
                 //----------------------------
-                //  Main carousel event loop
+                //  Carousel auto play loop
                 //----------------------------
                 bindMouseEvents();
+                var loopSpeed = 0.5;
+                var originalElementsCount = carouselItems.length - maxElementsToShow;
+                var resetPos = originalElementsCount * $(carouselItems[0]).outerWidth(true);
                 var draggableCarouselEventLoop = setInterval(() => {
-                    console.log(mouseMove);
-                    mouseMove = false;
+                    let currentPos = parseFloat(draggableCarouselInnerWrapper.css("left")) - loopSpeed;
+                    if (Utility.isInRange(Math.abs(currentPos), resetPos - loopSpeed, resetPos + loopSpeed)){
+                        currentPos = 0;
+                    }
+                    draggableCarouselInnerWrapper.css("left", currentPos);
                 });
 
                 //  Move items into the inner wrapper
