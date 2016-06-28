@@ -49,10 +49,30 @@ $(document).ready(() => {
         //---------------------------------------------
         //  Check if a number is within certain range
         //---------------------------------------------
-        isInRange: function(number, rangeLow, rangeHigh){
+        isInRange: function(number, rangeLow, rangeHigh) {
             return number >= rangeLow && number <= rangeHigh;
-        }
+        },
 
+        //--------------------------------------------------------------------
+        //  Get a attribute value of a HTML element and convert it to a number
+        //--------------------------------------------------------------------
+        getAttrAsNumber: function(jqueryObject, attrName) {
+            if (typeof jqueryObject !== "undefined") {
+                if (typeof attrName === "string") {
+                    return parseFloat(jqueryObject.attr(attrName));
+                }
+            }
+            return NaN;
+        },
+
+        getCSSAsNumber: function(jqueryObject, propertyName) {
+            if (typeof jqueryObject !== "undefined") {
+                if (typeof propertyName === "string") {
+                    return parseFloat(jqueryObject.css(propertyName));
+                }
+            }
+            return NaN;
+        }
     };
 
     //--------------------------------------------------------------------------------
@@ -529,6 +549,7 @@ $(document).ready(() => {
         //  UTC date variables and a helper function used to get current UTC date
         //---------------------------------------------------------------------------
         var date, UTCYear, UTCMonth, UTCDate, UTCHour, UTCMin, UTCSec, UTCTimeInMillisec;
+
         function getThisUTCTime() {
             date = new Date();
             UTCYear = date.getUTCFullYear();
@@ -544,7 +565,7 @@ $(document).ready(() => {
         //  Helper function to convert seconds to different parts of time
         //  Return: an object with 6 members: year, month, day, hour, min, sec 
         //-----------------------------------------------------------------
-        function extractTime(time){
+        function extractTime(time) {
             var y = parseInt(time / YEAR_SEC);
             time -= (y * YEAR_SEC);
 
@@ -564,7 +585,7 @@ $(document).ready(() => {
 
             return {
                 year: y,
-                month: mo, 
+                month: mo,
                 day: d,
                 hour: h,
                 minute: m,
@@ -621,7 +642,7 @@ $(document).ready(() => {
 
                 getThisUTCTime();
                 if (UTCTimeInMillisec < countDownStart ||
-                    UTCTimeInMillisec > countDownEnd){
+                    UTCTimeInMillisec > countDownEnd) {
                     countDownState = false;
                 }
                 countDownWrapper.attr(COUNT_DOWN_STATE_ATTR, countDownState ? "On" : "Off");
@@ -674,12 +695,15 @@ $(document).ready(() => {
     //  Set attribute "carousel-auto-play='On'" in the wrapper "draggable-carousel"  
     //  to enable auto playing, and "Off" to disable. The default value is "Off".
     //
+    //  Set attribute "carousel-auto-play-speed='x'" in the wrapper "draggable-carousel"
+    //  to change the play speed. X can be any non-negative number. Default speed is 0.5.
+    //
     //--------------------------------------------------
-    (function(){
+    (function() {
         //----------------------
         //  Position object
         //----------------------
-        var Position = function(x, y){
+        var Position = function(x, y) {
             this.x = x;
             this.y = y;
         };
@@ -691,6 +715,7 @@ $(document).ready(() => {
         const DRAGGABLE_CAROUSEL_INNER_WRAPPER_CALSS = ".draggable-carouse-inner";
         const DRAGGABLE_CAROUSEL_ITEM_CALSS = ".draggable-carousel-item";
         const CAROUSEL_AUTO_PLAY_ATTR = "carousel-auto-play";
+        const CAROUSEL_AUTO_PLAY_SPEED_ATTR = "carousel-auto-play-speed";
 
         //--------------------------------------------
         //  Function scoped variables declarations
@@ -704,25 +729,28 @@ $(document).ready(() => {
         //  Flags to record mouse states
         var mouseUp, mouseDown, mouseIn, mouseOut, mouseMove;
         //  Mouse positions
-        var lastMousePos = new Position(0, 0), currentMousePos = new Position(0, 0);
+        var lastMousePos = new Position(0, 0),
+            currentMousePos = new Position(0, 0);
 
         //  Function to check if mouse is moving
-        function isMouseMove(){
+        function isDragging() {
             return currentMousePos.x != lastMousePos.x || currentMousePos.y != lastMousePos.y;
         }
 
         //-------------------------------------------
         //  Bind event listener to the carousel items
         //-------------------------------------------
-         function bindMouseEvents(){
-            if (!isEventBound){
+        function bindMouseEvents() {
+            if (!isEventBound) {
                 let objectsToBind = carouselItems;
-                if (typeof objectsToBind !== "undefined"){
+                if (typeof objectsToBind !== "undefined") {
                     objectsToBind.find('*').css("pointer-events", "none");
-                    objectsToBind.mouseenter(() => {    mouseIn = true;     });
-                    objectsToBind.mouseout(() => {    mouseIn = false;     });
-                    objectsToBind.mousedown(() => {    mouseDown = true;mouseUp = false;     });
-                    objectsToBind.mouseup(() => {    mouseUp = true;mouseDown = false;     });
+                    objectsToBind.mouseenter(() => { mouseIn = true; });
+                    objectsToBind.mouseout(() => { mouseIn = false; });
+                    objectsToBind.mousedown(() => { mouseDown = true;
+                        mouseUp = false; });
+                    objectsToBind.mouseup(() => { mouseUp = true;
+                        mouseDown = false; });
                     isEventBound = true;
                 }
             }
@@ -731,11 +759,11 @@ $(document).ready(() => {
         //  Handle to the draggable carousel wrapper
         draggableCarouselWrapper = $(DRAGGABLE_CAROUSEL_WRAPPER_CALSS);
 
-        if (typeof draggableCarouselWrapper !== "undefined"){
+        if (typeof draggableCarouselWrapper !== "undefined") {
             //  Handle to the draggable carousel items array
             carouselItems = draggableCarouselWrapper.find(DRAGGABLE_CAROUSEL_ITEM_CALSS);
 
-            if (typeof carouselItems !== "undefined"){
+            if (typeof carouselItems !== "undefined") {
                 //  Get max elements that the wrapper can show
                 let maxElementsToShow = parseInt(draggableCarouselWrapper.width() / carouselItems.width());
 
@@ -752,27 +780,29 @@ $(document).ready(() => {
                 //  Check if auto-playing is specified
                 //---------------------------------------
                 let isAutoPlay = draggableCarouselWrapper.attr(CAROUSEL_AUTO_PLAY_ATTR);
-                isAutoPlay = typeof isAutoPlay === "undefined" || isAutoPlay == "Off" ? 
-                                false : isAutoPlay === "On" ? true : false;
+                isAutoPlay = typeof isAutoPlay === "undefined" || isAutoPlay == "Off" ?
+                    false : isAutoPlay === "On" ? true : false;
 
-                if (isAutoPlay){
+                if (isAutoPlay) {
                     //------------------------------------------------------------------------------------
                     //  Copy the first maxElementsToShow elements to append to the end of the wrapper
                     //------------------------------------------------------------------------------------
-                    for (let i = 0; i < maxElementsToShow; i++){
+                    for (let i = 0; i < maxElementsToShow; i++) {
                         $(carouselItems[i]).clone().appendTo(draggableCarouselWrapper);
                     }
 
                     //  Update the handle to items
                     carouselItems = $(DRAGGABLE_CAROUSEL_ITEM_CALSS);
                 }
+                //  The count of elements before adding the extra elements for auto playing
+                var originalElementsCount = carouselItems.length - maxElementsToShow;
 
                 //-----------------------------------------
                 //  Set CSS of the inner wrapper 
                 //-----------------------------------------
                 let itemsWidthSum = carouselItems.width() * carouselItems.length; // Adding width of all elements together
                 let innerWrapperCSS = {
-                    "width": itemsWidthSum * 1.5,    // Leave extra 50% width
+                    "width": itemsWidthSum * 1.5, // Leave extra 50% width
                     "position": "relative",
                     "left": 0,
                     "top": "50%",
@@ -783,35 +813,46 @@ $(document).ready(() => {
                 };
                 Utility.addCSS(draggableCarouselInnerWrapper, innerWrapperCSS);
 
+                //  Move items into the inner wrapper
+                carouselItems.appendTo(DRAGGABLE_CAROUSEL_INNER_WRAPPER_CALSS);
+
                 //-------------------------------
                 //  Carousel draggable event
                 //-------------------------------
-                draggableCarouselInnerWrapper.mousemove((event) => {
-                    if (mouseIn && mouseDown){
-                        lastMousePos.x = currentMousePos.x;
-                        lastMousePos.y = currentMousePos.y;
+                carouselItems.mousemove((event) => {
+                    lastMousePos.x = currentMousePos.x;
+                    lastMousePos.y = currentMousePos.y;
+
+                    if (mouseIn && mouseDown) {
                         currentMousePos.x = event.pageX;
-                        currentMousePos.y = event.pageY;        
+                        currentMousePos.y = event.pageY;
                     }
                 });
 
-                //----------------------------
-                //  Carousel auto play loop
-                //----------------------------
                 bindMouseEvents();
-                var loopSpeed = 0.5;
-                var originalElementsCount = carouselItems.length - maxElementsToShow;
-                var resetPos = originalElementsCount * $(carouselItems[0]).outerWidth(true);
-                var draggableCarouselEventLoop = setInterval(() => {
-                    let currentPos = parseFloat(draggableCarouselInnerWrapper.css("left")) - loopSpeed;
-                    if (Utility.isInRange(Math.abs(currentPos), resetPos - loopSpeed, resetPos + loopSpeed)){
-                        currentPos = 0;
-                    }
-                    draggableCarouselInnerWrapper.css("left", currentPos);
-                });
 
-                //  Move items into the inner wrapper
-                carouselItems.appendTo(DRAGGABLE_CAROUSEL_INNER_WRAPPER_CALSS);
+                //  Get user specified loop speed
+                var loopSpeed = Utility.getAttrAsNumber(draggableCarouselWrapper, CAROUSEL_AUTO_PLAY_SPEED_ATTR);
+                loopSpeed = isNaN(loopSpeed) ? 0.5 : loopSpeed;
+
+                //  Position where to reset the carousel's left postion
+                var resetPos = originalElementsCount * $(carouselItems[0]).outerWidth(true);
+
+                //----------------------------
+                //  Carousel loop
+                //----------------------------
+                var draggableCarouselEventLoop = setInterval(() => {
+                    if (!isDragging()) {
+                        //  Current left position of the inner wrapper
+                        let currentPos = Utility.getCSSAsNumber(draggableCarouselInnerWrapper, "left") - loopSpeed;
+                        //  Reset the left position
+                        if (Utility.isInRange(Math.abs(currentPos), resetPos - loopSpeed, resetPos + loopSpeed)) {
+                            currentPos = 0;
+                        }
+                        //  Apply the left position
+                        draggableCarouselInnerWrapper.css("left", currentPos);
+                    }
+                });
             }
         }
     })();
