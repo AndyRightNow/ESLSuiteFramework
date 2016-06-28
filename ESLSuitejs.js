@@ -717,6 +717,9 @@ $(document).ready(() => {
         const CAROUSEL_AUTO_PLAY_ATTR = "carousel-auto-play";
         const CAROUSEL_AUTO_PLAY_SPEED_ATTR = "carousel-auto-play-speed";
 
+        //  Threshold value for auto play loop to match the reset position
+        const LOOP_RESET_THRESHOLD = 0.5;
+
         //--------------------------------------------
         //  Function scoped variables declarations
         //--------------------------------------------
@@ -747,10 +750,14 @@ $(document).ready(() => {
                     objectsToBind.find('*').css("pointer-events", "none");
                     objectsToBind.mouseenter(() => { mouseIn = true; });
                     objectsToBind.mouseout(() => { mouseIn = false; });
-                    objectsToBind.mousedown(() => { mouseDown = true;
-                        mouseUp = false; });
-                    objectsToBind.mouseup(() => { mouseUp = true;
-                        mouseDown = false; });
+                    objectsToBind.mousedown(() => {
+                        mouseDown = true;
+                        mouseUp = false;
+                    });
+                    objectsToBind.mouseup(() => {
+                        mouseUp = true;
+                        mouseDown = false;
+                    });
                     isEventBound = true;
                 }
             }
@@ -842,16 +849,34 @@ $(document).ready(() => {
                 //  Carousel loop
                 //----------------------------
                 var draggableCarouselEventLoop = setInterval(() => {
+                    //  Current left position of the inner wrapper
+                    var currentPos;
+
                     if (!isDragging()) {
-                        //  Current left position of the inner wrapper
-                        let currentPos = Utility.getCSSAsNumber(draggableCarouselInnerWrapper, "left") - loopSpeed;
-                        //  Reset the left position
-                        if (Utility.isInRange(Math.abs(currentPos), resetPos - loopSpeed, resetPos + loopSpeed)) {
-                            currentPos = 0;
+                        if (isAutoPlay) {
+                            //  Update the current position if auto playing is specified
+                            currentPos = Utility.getCSSAsNumber(draggableCarouselInnerWrapper, "left") - loopSpeed;
                         }
-                        //  Apply the left position
-                        draggableCarouselInnerWrapper.css("left", currentPos);
+                    } 
+                    else {
+                        console.log(currentMousePos);
                     }
+
+                    //----------------------------------
+                    //  Check if it hits the bound and 
+                    //  reset the position. Then apply 
+                    //  the changes
+                    //----------------------------------
+
+                    //  Reset the left position
+                    if (Utility.isInRange(
+                        Math.abs(currentPos),
+                        resetPos - LOOP_RESET_THRESHOLD,
+                        resetPos + LOOP_RESET_THRESHOLD)) {
+                        currentPos = 0;
+                    }
+                    //  Apply the left position
+                    draggableCarouselInnerWrapper.css("left", currentPos);
                 });
             }
         }
