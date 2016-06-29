@@ -65,6 +65,9 @@ $(document).ready(() => {
             return NaN;
         },
 
+        //------------------------------------------
+        //  Get CSS property value as number
+        //------------------------------------------
         getCSSAsNumber: function(jqueryObject, propertyName) {
             if (typeof jqueryObject !== "undefined") {
                 if (typeof propertyName === "string") {
@@ -733,12 +736,11 @@ $(document).ready(() => {
         var mouseUp, mouseDown, mouseIn, mouseOut, mouseMove;
         //  Mouse positions
         var lastMousePos = new Position(0, 0),
-            currentMousePos = new Position(0, 0);
+            currentMousePos = new Position(0, 0),
+            draggingMousePos = new Position(0, 0);
 
-        //  Function to check if mouse is moving
-        function isDragging() {
-            return currentMousePos.x != lastMousePos.x || currentMousePos.y != lastMousePos.y;
-        }
+        //  Variable to check if mouse is dragging
+        var isDragging = false;
 
         //-------------------------------------------
         //  Bind event listener to the carousel items
@@ -830,9 +832,12 @@ $(document).ready(() => {
                     lastMousePos.x = currentMousePos.x;
                     lastMousePos.y = currentMousePos.y;
 
+                    currentMousePos.x = event.pageX;
+                    currentMousePos.y = event.pageY;
+
+                    isDragging = false;
                     if (mouseIn && mouseDown) {
-                        currentMousePos.x = event.pageX;
-                        currentMousePos.y = event.pageY;
+                        isDragging = true;
                     }
                 });
 
@@ -850,16 +855,16 @@ $(document).ready(() => {
                 //----------------------------
                 var draggableCarouselEventLoop = setInterval(() => {
                     //  Current left position of the inner wrapper
-                    var currentPos;
+                    var currentPos = Utility.getCSSAsNumber(draggableCarouselInnerWrapper, "left");
 
-                    if (!isDragging()) {
+                    if (!isDragging) {
                         if (isAutoPlay) {
                             //  Update the current position if auto playing is specified
-                            currentPos = Utility.getCSSAsNumber(draggableCarouselInnerWrapper, "left") - loopSpeed;
+                            currentPos -= loopSpeed;
                         }
                     } 
                     else {
-                        console.log(currentMousePos);
+                        currentPos += (0.1 * (currentMousePos.x - lastMousePos.x));
                     }
 
                     //----------------------------------
