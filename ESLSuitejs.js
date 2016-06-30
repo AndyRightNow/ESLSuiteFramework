@@ -80,7 +80,7 @@ $(document).ready(() => {
         //----------------------------------------------
         //  Clamp a value within a certain range
         //----------------------------------------------
-        clamp: function(value, low, high){
+        clamp: function(value, low, high) {
             return value < low ? low : value > high ? high : value;
         }
     };
@@ -209,6 +209,26 @@ $(document).ready(() => {
         const POP_CONT_MAX = 50; //  Max popped out window content
         const NO_MOBILE = "popbtn-nomobile";
 
+        //--------------------------------
+        //  Check if a click event handler is bound to a set of elements. 
+        //  If not, return an array of elements that are not bound.
+        //  Else return 1. 
+        function isClickEventBound(className) {
+            var arr = [];
+            var DOMObjects = document.getElementsByClassName(className);
+            for (let i = 0; i < DOMObjects.length; i++) {
+                var e = $._data(DOMObjects[i], 'click');
+                if (!e || !e.click) {
+                    arr.push(DOMObjects[i]);
+                }
+            }
+            if (arr.length !== 0) {
+                return arr;
+            } else {
+                return 1;
+            }
+        }
+
         //----------------------
         //  Build HTML
         //----------------------
@@ -237,6 +257,16 @@ $(document).ready(() => {
             $(".popovercontent").appendTo('.popoverwnd').removeClass(NONE);
         })();
 
+        //-------------------------------
+        //  Popped out window jquery vars
+        //-------------------------------
+        var background = $('.popoverbg'),
+            wnd = $('.popoverwnd'),
+            close = $('.close');
+
+        //  Currrent popped out content
+        var curPopCont = null;
+
         //------------------------
         //  Transform function
         //------------------------
@@ -249,58 +279,85 @@ $(document).ready(() => {
             }
         }
 
-        //-------------------------------
-        //  Popped out window jquery vars
-        //-------------------------------
-        var background = $('.popoverbg'),
-            wnd = $('.popoverwnd'),
-            close = $('.close');
+        //---------------------------------------------------------
+        //  Bind popbtn click events. It returns the button count
+        //---------------------------------------------------------
+        function bindButtonClickEvents() {
+            var buttonCount = 0;
+            //---------------------------------------------
+            //  Show the window and append the content
+            //---------------------------------------------
+            for (let i = 1; i <= POP_CONT_MAX; i++) {
+                let thisCont = "popcont" + i;
+                let thisBtn = "popbtn" + i;
 
-        //  Currrent popped out content
-        var curPopCont = null;
+                buttonCount += $("." + thisBtn).length;
+                var checkBoundResult = isClickEventBound(thisBtn);
 
-        //---------------------------------------------
-        //  Show the window and append the content
-        //---------------------------------------------
-        for (let i = 1; i <= POP_CONT_MAX; i++) {
-            let thisCont = "popcont" + i;
-            let thisBtn = "popbtn" + i;
+                if (checkBoundResult !== 1) {
+                    for (let j = 0; j < checkBoundResult.length; j++) {
+                        $(checkBoundResult[j]).click((event) => {
+                            //---------------------------------------------------
+                            //  Adjust the size of the pop over window on mobile
+                            //---------------------------------------------------
+                            if (Utility.isMobile()) {
+                                wnd.css("width", "100vw").css("height", "80vh");
+                            }
 
-            //  Hide all the content
-            $("." + thisCont).addClass(NONE);
+                            //------------------------------------------------------------
+                            //  Prevent default action and show the window when
+                            //  1. Not on mobile
+                            //  2. On mobile and "popbtn-nomobile" not specified for the button
+                            //------------------------------------------------------------
+                            if (!Utility.isMobile() ||
+                                Utility.isMobile() && !$("." + thisBtn).hasClass(NO_MOBILE)) {
+                                event.preventDefault();
 
-            $("." + thisBtn).click((event) => {
-                //---------------------------------------------------
-                //  Adjust the size of the pop over window on mobile
-                //---------------------------------------------------
-                if (Utility.isMobile()) {
-                    wnd.css("width", "100vw").css("height", "80vh");
+                                //  Show backgournd
+                                background.fadeIn(ANIMATE_TIME);
+
+                                //  Show window
+                                transform(wnd, SHOW_PROP);
+
+                                //  Toggle scroll bar
+                                $('html').toggleClass(NO_OVERFLOW);
+
+                                curPopCont = $("." + thisCont);
+
+                                curPopCont.toggleClass(NONE);
+                            }
+                        });
+                    }
                 }
-
-                //------------------------------------------------------------
-                //  Prevent default action and show the window when
-                //  1. Not on mobile
-                //  2. On mobile and "popbtn-nomobile" not specified for the button
-                //------------------------------------------------------------
-                if (!Utility.isMobile() ||
-                    Utility.isMobile() && !$("." + thisBtn).hasClass(NO_MOBILE)) {
-                    event.preventDefault();
-
-                    //  Show backgournd
-                    background.fadeIn(ANIMATE_TIME);
-
-                    //  Show window
-                    transform(wnd, SHOW_PROP);
-
-                    //  Toggle scroll bar
-                    $('html').toggleClass(NO_OVERFLOW);
-
-                    curPopCont = $("." + thisCont);
-
-                    curPopCont.toggleClass(NONE);
-                }
-            });
+            }
+            return buttonCount;
         }
+
+
+
+        //-----------------------------
+        //  Hide all the content
+        //-----------------------------
+        for (let i = 1; i <= POP_CONT_MAX; i++) {
+            let thisContClass = "." + "popcont" + i;
+            if (!$(thisContClass).hasClass(NONE)) {
+                $(thisContClass).addClass(NONE);
+            }
+        }
+
+        //----------------------------------------------
+        //  Bind click events to all buttons, including 
+        //  buttons that are added dynamically.
+        //
+        //  ******************************************
+        //  *******************NOTE*******************
+        //  ******************************************
+        //  This is a dirty hack which I used as a temporary
+        //  trick to handle all dynamically added elements.
+        //----------------------------------------------
+        setTimeout(() => {
+            bindButtonClickEvents();
+        });
 
         //--------------------------------------------------
         //  Close the window and toggle the content
@@ -462,9 +519,9 @@ $(document).ready(() => {
     //  Usage: 
     //  
     //  Add attribute to a HTML element: 
-    //  1. adaptheight = "Sibling-n" means setting the height
+    //  1. adapt-height = "Sibling-n" means setting the height
     //  of the element to the height of its nth sibling
-    //  e.g. "Sibling-1" 
+    //  e.g. "Sibling-1" (n starts from 1)
     //
     //  
     //--------------------------------------------------
@@ -475,14 +532,14 @@ $(document).ready(() => {
         const SIBLING = "Sibling";
 
         var ResponsiveElementHeightInterval = setInterval(() => {
-            let elements = $("[adaptheight]");
+            let elements = $("[adapt-height]");
             if (typeof elements === "undefined") { //  Check if elements with the attribute don't exist
                 clearInterval(ResponsiveElementHeightInterval);
             }
 
             let isAllInvalid = true; //  Flag used to check if there is at least one valid attribute value
             for (let i = 0; i < elements.length; i++) { //  Use native for loop to make the loop within this scope
-                let thisAttr = $(elements[i]).attr('adaptheight');
+                let thisAttr = $(elements[i]).attr('adapt-height');
                 if (typeof thisAttr !== "undefined") {
                     if (thisAttr.substr(0, SIBLING.length) === SIBLING) {
                         let num = parseInt(thisAttr[thisAttr.length - 1]);
@@ -872,8 +929,7 @@ $(document).ready(() => {
                             //  Update the current position if auto playing is specified
                             currentPos -= loopSpeed;
                         }
-                    } 
-                    else {
+                    } else {
                         currentPos += (0.5 * (currentMousePos.x - lastMousePos.x));
                     }
 
@@ -882,9 +938,9 @@ $(document).ready(() => {
                     //  reset the position. 
                     //----------------------------------
                     if (Utility.isInRange(
-                        Math.abs(currentPos),
-                        resetPos - LOOP_RESET_THRESHOLD,
-                        resetPos + LOOP_RESET_THRESHOLD)) {
+                            Math.abs(currentPos),
+                            resetPos - LOOP_RESET_THRESHOLD,
+                            resetPos + LOOP_RESET_THRESHOLD)) {
                         currentPos = 0;
                     }
 
