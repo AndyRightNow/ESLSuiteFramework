@@ -75,6 +75,13 @@ $(document).ready(() => {
                 }
             }
             return NaN;
+        },
+
+        //----------------------------------------------
+        //  Clamp a value within a certain range
+        //----------------------------------------------
+        clamp: function(value, low, high){
+            return value < low ? low : value > high ? high : value;
         }
     };
 
@@ -721,7 +728,7 @@ $(document).ready(() => {
         const CAROUSEL_AUTO_PLAY_SPEED_ATTR = "carousel-auto-play-speed";
 
         //  Threshold value for auto play loop to match the reset position
-        const LOOP_RESET_THRESHOLD = 0.5;
+        const LOOP_RESET_THRESHOLD = 1;
 
         //--------------------------------------------
         //  Function scoped variables declarations
@@ -850,6 +857,9 @@ $(document).ready(() => {
                 //  Position where to reset the carousel's left postion
                 var resetPos = originalElementsCount * $(carouselItems[0]).outerWidth(true);
 
+                //  Starting left position
+                const startPos = Utility.getCSSAsNumber(draggableCarouselInnerWrapper, "left");
+
                 //----------------------------
                 //  Carousel loop
                 //----------------------------
@@ -864,22 +874,23 @@ $(document).ready(() => {
                         }
                     } 
                     else {
-                        currentPos += (0.1 * (currentMousePos.x - lastMousePos.x));
+                        currentPos += (0.5 * (currentMousePos.x - lastMousePos.x));
                     }
 
                     //----------------------------------
-                    //  Check if it hits the bound and 
-                    //  reset the position. Then apply 
-                    //  the changes
+                    //  Check if it hits the bound, then 
+                    //  reset the position. 
                     //----------------------------------
-
-                    //  Reset the left position
                     if (Utility.isInRange(
                         Math.abs(currentPos),
                         resetPos - LOOP_RESET_THRESHOLD,
                         resetPos + LOOP_RESET_THRESHOLD)) {
                         currentPos = 0;
                     }
+
+                    //  Clamp the left position within the boundary
+                    currentPos = Utility.clamp(currentPos, -resetPos, startPos);
+
                     //  Apply the left position
                     draggableCarouselInnerWrapper.css("left", currentPos);
                 });
