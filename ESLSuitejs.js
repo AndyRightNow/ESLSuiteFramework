@@ -1,5 +1,13 @@
 /* jshint esversion: 6 */
 
+//---------------------------------------------------------
+//                  ESL Suite Framework JS
+//
+//  The framework encapsulate animation effects and widgets, 
+//  all of which are in a certain CSS style.
+//
+//---------------------------------------------------------
+
 $(document).ready(() => {
     "use strict";
     //----------------------------------
@@ -142,7 +150,6 @@ $(document).ready(() => {
                     } else if ($(currElem).hasClass(SCALE_IN)) {
                         $(currElem).removeClass(SCALE_IN);
                     }
-
 
                     setTimeout(function() { //After the animation, restore the inline style
                         Utility.restoreInlineCSS($(currElem), styleStr);
@@ -390,8 +397,10 @@ $(document).ready(() => {
     //  "showhiddenitembtn" to the button you want to bind. Specify how
     //  many items you want to show on one click by adding
     //  attribute name "num-to-show" and value to the button element.
-    //  Value can be any number ,"All", "Half", or "Quarter". The default value is "All".
+    //  Value can be any integer number ,"All", "Half", or "Quarter". 
+    //  The default value is "All".
     //  E.g. num-to-show = "All"
+    //       num-to-show = "Half"
     //       num-to-show = "1"
     //
     //  Note: After all elements are shown, the button will be hidden
@@ -687,9 +696,8 @@ $(document).ready(() => {
                 //  Get time zone information specified by user
                 //  If unspecified or invalid, set time zone to 0
                 //-----------------------------------------------
-                let timeZone = countDownWrapper.attr(TIME_ZONE_ATTR);
-                if (!isNaN(parseInt(timeZone))) {
-                    timeZone = parseInt(timeZone);
+                let timeZone = Utility.getAttrAsNumber(TIME_ZONE_ATTR);
+                if (!isNaN(timeZone)) {
                     if (timeZone > 12 || timeZone < -12) {
                         timeZone = 0;
                     }
@@ -700,6 +708,10 @@ $(document).ready(() => {
                 //------------------------------------------
                 //  Get count down state specified by user
                 //  If unpecified or invalid, set state to on
+                //
+                //  Use countDownState first to store the attribute
+                //  specified by the user, then assign a boolean value
+                //  based on the attribute to it.
                 //------------------------------------------
                 let countDownState = countDownWrapper.attr(COUNT_DOWN_STATE_ATTR);
                 countDownState = typeof countDownState === "undefined" ||
@@ -716,7 +728,7 @@ $(document).ready(() => {
 
                 //-------------------------------------
                 //  Start and show the count down if the
-                //  state is on
+                //  state is true.
                 //-------------------------------------
                 if (countDownState) {
                     var CountDownTimerInterval = setInterval(() => {
