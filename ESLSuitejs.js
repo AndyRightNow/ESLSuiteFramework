@@ -306,13 +306,16 @@ $(document).ready(() => {
 
         //------------------------
         //  Transform function
+        //  @param jqueryObject: DOM element selected by jquery function '$'
+        //  @param propValue: CSS property value. 
         //------------------------
-        function transform(ele, prop) {
-            if (typeof ele !== "undefined" && typeof prop !== "undefined") {
-                ele.css("transform", prop);
-                ele.css("-webkit-transform", prop);
-                ele.css("-o-transform", prop);
-                ele.css("-moz-transform", prop);
+        function transform(jqueryObject, propValue) {
+            if (typeof jqueryObject !== "undefined" && 
+                typeof propValue !== "undefined") {
+                jqueryObject.css("transform", propValue);
+                jqueryObject.css("-webkit-transform", propValue);
+                jqueryObject.css("-o-transform", propValue);
+                jqueryObject.css("-moz-transform", propValue);
             }
         }
 
@@ -357,8 +360,10 @@ $(document).ready(() => {
                                 //  Toggle scroll bar
                                 $('html').toggleClass(NO_OVERFLOW);
 
+                                //  Store the current popout content
                                 curPopCont = $("." + thisCont);
 
+                                //  Show the content
                                 curPopCont.toggleClass(NONE);
                             }
                         });
