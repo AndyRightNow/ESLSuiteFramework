@@ -8,6 +8,35 @@
 //
 //---------------------------------------------------------
 
+//---------------------------------------------------
+//  Public APIs
+//
+//  Used to be called in user's code to interact with
+//  the code inside the anonymous function scope
+//----------------------------------------------------
+var ESLSuiteAPI = {
+    //-------------------------------------
+    //  APIs of Pop-out window widget
+    //-------------------------------------
+    PopOutWindow: {
+        //  Private member variable that indicates the rebind signal
+        _rebindState: false,
+        //-----------------------------------------------------------------
+        //  Private member function that changes the rebind signal
+        //---------------------------------------------------------------
+        _changeRebindState: function(state){
+            ESLSuiteAPI.PopOutWindow._rebindState = state;
+        },
+
+        //----------------------------------------------------------------------
+        //  Public member function that sends rebind signal to the widget code
+        //----------------------------------------------------------------------
+        rebindElements: function(){
+            ESLSuiteAPI.PopOutWindow._changeRebindState(true);
+        }
+    },
+};
+
 $(document).ready(() => {
     "use strict";
     //----------------------------------
@@ -216,11 +245,12 @@ $(document).ready(() => {
         const POP_CONT_MAX = 50; //  Max popped out window content
         const NO_MOBILE = "popbtn-nomobile";
 
-        //--------------------------------
+        //-----------------------------------------------------------------
         //  Check if a click event handler is bound to a set of elements. 
         //  If not, return an array of elements that are not bound.
-        //  Else return 1. 
-        function isClickEventBound(className) {
+        //  Else return null. 
+        //------------------------------------------------------------------
+        function getUnboundElements(className) {
             var arr = [];
             var DOMObjects = document.getElementsByClassName(className);
             for (let i = 0; i < DOMObjects.length; i++) {
@@ -232,7 +262,7 @@ $(document).ready(() => {
             if (arr.length !== 0) {
                 return arr;
             } else {
-                return 1;
+                return null;
             }
         }
 
@@ -291,19 +321,17 @@ $(document).ready(() => {
         //---------------------------------------------------------
         function bindButtonClickEvents() {
             var buttonCount = 0;
-            //---------------------------------------------
-            //  Show the window and append the content
-            //---------------------------------------------
+
             for (let i = 1; i <= POP_CONT_MAX; i++) {
                 let thisCont = "popcont" + i;
                 let thisBtn = "popbtn" + i;
 
                 buttonCount += $("." + thisBtn).length;
-                var checkBoundResult = isClickEventBound(thisBtn);
+                var unboundElements = getUnboundElements(thisBtn);
 
-                if (checkBoundResult !== 1) {
-                    for (let j = 0; j < checkBoundResult.length; j++) {
-                        $(checkBoundResult[j]).click((event) => {
+                if (unboundElements !== null) {
+                    for (let j = 0; j < unboundElements.length; j++) {
+                        $(unboundElements[j]).click((event) => {
                             //---------------------------------------------------
                             //  Adjust the size of the pop over window on mobile
                             //---------------------------------------------------
@@ -340,7 +368,15 @@ $(document).ready(() => {
             return buttonCount;
         }
 
-
+        //---------------------------------------------
+        //  Clear popbtn(s) click events
+        //---------------------------------------------
+        function clearButtonClickEvents(){
+            for (let i = 1; i <= POP_CONT_MAX; i++) {
+                let thisBtn = ".popbtn" + i;
+                $(thisBtn).off("click");
+            }
+        }
 
         //-----------------------------
         //  Hide all the content
@@ -364,6 +400,21 @@ $(document).ready(() => {
         //----------------------------------------------
         setTimeout(() => {
             bindButtonClickEvents();
+        });
+
+        //----------------------------------------------
+        //  Event loop to get the API signals
+        //----------------------------------------------
+        var ESLSuiteAPI_PopOutWindow_EventLoop = setInterval(() => {
+            //----------------------------------
+            //  Check rebind signal
+            //----------------------------------
+            if (ESLSuiteAPI.PopOutWindow._rebindState){
+                clearButtonClickEvents();
+                bindButtonClickEvents();
+                //  Reset rebind state
+                ESLSuiteAPI.PopOutWindow._changeRebindState(false);
+            }
         });
 
         //--------------------------------------------------
@@ -523,7 +574,7 @@ $(document).ready(() => {
 
     //--------------------------------------------------
     // 
-    //  Responsive element height
+    //  Responsive element properties
     //
     //  Usage: 
     //  
@@ -531,8 +582,6 @@ $(document).ready(() => {
     //  1. adapt-height = "Sibling-n" means setting the height
     //  of the element to the height of its nth sibling
     //  e.g. "Sibling-1" (n starts from 1)
-    //
-    //  
     //--------------------------------------------------
     (function() {
         //------------------------

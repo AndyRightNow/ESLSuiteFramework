@@ -203,10 +203,15 @@ a:hover,
 /****************
   Display
 *****************/
-
 .inlineblock {
   display: inline-block;
   vertical-align: middle;
+}
+.aligntop{
+  vertical-align: top;
+}
+.alignbottom{
+  vertical-align: bottom;
 }
 
 /****************
@@ -403,17 +408,17 @@ a:hover,
   }
 
 /****************
-Widths
+  Widths
 *****************/
-.width10,
-.width20,
-.width30,
-.width40,
-.width50,
-.width60,
-.width70,
-.width80,
-.width90{
-  width: 70%;
-}
+  .width10,
+  .width20,
+  .width30,
+  .width40,
+  .width50,
+  .width60,
+  .width70,
+  .width80,
+  .width90{
+    width: 70%;
+  }
 }
