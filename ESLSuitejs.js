@@ -24,14 +24,14 @@ var ESLSuiteAPI = {
         //-----------------------------------------------------------------
         //  Private member function that changes the rebind signal
         //---------------------------------------------------------------
-        _changeRebindState: function(state){
+        _changeRebindState: function(state) {
             ESLSuiteAPI.PopOutWindow._rebindState = state;
         },
 
         //----------------------------------------------------------------------
         //  Public member function that sends rebind signal to the widget code
         //----------------------------------------------------------------------
-        rebindElements: function(){
+        rebindElements: function() {
             ESLSuiteAPI.PopOutWindow._changeRebindState(true);
         }
     },
@@ -371,7 +371,7 @@ $(document).ready(() => {
         //---------------------------------------------
         //  Clear popbtn(s) click events
         //---------------------------------------------
-        function clearButtonClickEvents(){
+        function clearButtonClickEvents() {
             for (let i = 1; i <= POP_CONT_MAX; i++) {
                 let thisBtn = ".popbtn" + i;
                 $(thisBtn).off("click");
@@ -409,7 +409,7 @@ $(document).ready(() => {
             //----------------------------------
             //  Check rebind signal
             //----------------------------------
-            if (ESLSuiteAPI.PopOutWindow._rebindState){
+            if (ESLSuiteAPI.PopOutWindow._rebindState) {
                 clearButtonClickEvents();
                 bindButtonClickEvents();
                 //  Reset rebind state
