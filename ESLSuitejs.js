@@ -155,34 +155,79 @@ $(document).ready(() => {
             "-moz-transition": "all " + TRANSITION_TIME_IN_SEC + "s ease-in-out"
         };
 
-        $(window).scroll(function(event) {
+        //  Flag used to indicate if current element is shown
+        var isCurrentElementShown = false;
+        //  Flag used to indicate if the next element can be fetched
+        var canGetNextElement = true;
 
+        //  Keep count of 
+
+        //  Current element to show
+        var currElem;
+
+        var ScrollToShowEventLoop = setInterval(() => {
+
+            //--------------------------------------
+            //  Get the collection of elements with
+            //  class "scrollshow". If the collection's
+            //  length equals to zero or the collection is 
+            //  undefined, clear the interval.
+            //--------------------------------------
             var elements = Array.from($("." + SCROLL_SHOW));
-            var currElem = elements.shift();
+            if (typeof elements === "undefined" ||
+                elements.length === 0) {
+                clearInterval(ScrollToShowEventLoop);
+            }
 
-            if (currElem !== undefined) {
-                let windowBottom = $(window).scrollTop() + $(window).height(),
-                    curEleBottom = $(currElem).offset().top + $(currElem).height();
+            //-------------------------------------
+            //  If the current element is shown and
+            //  the next element can be fetched, 
+            //  fetch the next element and reset flags
+            //-------------------------------------
+            if (canGetNextElement) {
+                currElem = elements.shift();
+                isCurrentElementShown = false;
+                canGetNextElement = false;
+            }
 
-                if (windowBottom >= curEleBottom) {
-                    let styleStr = Utility.storeInlineCSS($(currElem)); // Store the inline css style
 
-                    Utility.addCSS($(currElem), TRANSITION_OBJECT); //Add css transition to elements
+            if (!isCurrentElementShown) {
+                if (typeof currElem !== "undefined") {
+                    //--------------------------------------------
+                    //  Get the bottom positions of the window and
+                    //  the current element
+                    //--------------------------------------------
+                    let windowBottom = $(window).scrollTop() + $(window).height(),
+                        curEleBottom = $(currElem).offset().top + $(currElem).height();
 
-                    $(currElem).removeClass(SCROLL_SHOW); //Show default effect
+                    if (windowBottom >= curEleBottom) {
+                        let styleStr = Utility.storeInlineCSS($(currElem)); // Store the inline css style
 
-                    //------------------
-                    //  Switch effects
-                    //------------------
-                    if ($(currElem).hasClass(FADE_FROM_BOTTOM)) {
-                        $(currElem).removeClass(FADE_FROM_BOTTOM);
-                    } else if ($(currElem).hasClass(SCALE_IN)) {
-                        $(currElem).removeClass(SCALE_IN);
+                        Utility.addCSS($(currElem), TRANSITION_OBJECT); //Add css transition to elements
+
+                        $(currElem).removeClass(SCROLL_SHOW); //Show default effect
+
+                        //------------------
+                        //  Switch effects
+                        //------------------
+                        if ($(currElem).hasClass(FADE_FROM_BOTTOM)) {
+                            $(currElem).removeClass(FADE_FROM_BOTTOM);
+                        } else if ($(currElem).hasClass(SCALE_IN)) {
+                            $(currElem).removeClass(SCALE_IN);
+                        }
+                        //-----------------------------------------------
+                        //  After the animation, restore the inline style
+                        //  and set the flag to signal that the next element 
+                        //  can be fetched.
+                        //-----------------------------------------------
+                        setTimeout(function() { 
+                            Utility.restoreInlineCSS($(currElem), styleStr);
+                            canGetNextElement = true;
+                        }, TRANSITION_TIME - 1);
+
+                        isCurrentElementShown = true;
                     }
 
-                    setTimeout(function() { //After the animation, restore the inline style
-                        Utility.restoreInlineCSS($(currElem), styleStr);
-                    }, TRANSITION_TIME - 1);
                 }
             }
         });
@@ -200,16 +245,21 @@ $(document).ready(() => {
     //
     //-----------------------------------
     (function() {
+        const ANIMATE_TIME = 600;
+
         $(".scrolllink").on('click', function(event) {
             var thisHref = $(event.target).attr('href');
-            if (typeof thisHref !== "undefined") { //  Check if it's on an anchor tag or with href
+            if (typeof thisHref !== "undefined") { //  Check if it's in an anchor tag or with href
                 if (thisHref[0] === '#') { //  Check if it's internal link
                     event.preventDefault();
+
+                    //  Store the internal link address
                     let thisHash = this.hash;
-                    let animateTime = 600;
+
                     $('html, body').animate({
                         scrollTop: $(thisHash).offset().top
-                    }, animateTime, () => {
+                    }, ANIMATE_TIME, () => {
+                        //  Jump to the address
                         window.location.hash = thisHash;
                     });
                 }
@@ -310,7 +360,7 @@ $(document).ready(() => {
         //  @param propValue: CSS property value. 
         //------------------------
         function transform(jqueryObject, propValue) {
-            if (typeof jqueryObject !== "undefined" && 
+            if (typeof jqueryObject !== "undefined" &&
                 typeof propValue !== "undefined") {
                 jqueryObject.css("transform", propValue);
                 jqueryObject.css("-webkit-transform", propValue);
@@ -596,7 +646,8 @@ $(document).ready(() => {
 
         var ResponsiveElementHeightInterval = setInterval(() => {
             let elements = $("[adapt-height]");
-            if (typeof elements === "undefined") { //  Check if elements with the attribute don't exist
+            if (typeof elements === "undefined" ||
+                elements.length === 0) { //  Check if elements with the attribute don't exist
                 clearInterval(ResponsiveElementHeightInterval);
             }
 
@@ -725,7 +776,8 @@ $(document).ready(() => {
 
         var countDownWrapper = $(COUNT_DOWN_WRAPPER_CLASS); //  Wrapper class
 
-        if (typeof countDownWrapper !== "undefined") {
+        if (typeof countDownWrapper !== "undefined" &&
+            countDownWrapper.length !== 0) {
 
             //-----------------------------------
             //  Init all timer display elements
@@ -878,7 +930,8 @@ $(document).ready(() => {
         function bindMouseEvents() {
             if (!isEventBound) {
                 let objectsToBind = carouselItems;
-                if (typeof objectsToBind !== "undefined") {
+                if (typeof objectsToBind !== "undefined" ||
+                    objectsToBind.length !== 0) {
                     objectsToBind.find('*').css("pointer-events", "none");
                     objectsToBind.mouseenter(() => { mouseIn = true; });
                     objectsToBind.mouseout(() => { mouseIn = false; });
@@ -898,11 +951,13 @@ $(document).ready(() => {
         //  Handle to the draggable carousel wrapper
         draggableCarouselWrapper = $(DRAGGABLE_CAROUSEL_WRAPPER_CALSS);
 
-        if (typeof draggableCarouselWrapper !== "undefined") {
+        if (typeof draggableCarouselWrapper !== "undefined" &&
+            draggableCarouselWrapper.length !== 0) {
             //  Handle to the draggable carousel items array
             carouselItems = draggableCarouselWrapper.find(DRAGGABLE_CAROUSEL_ITEM_CALSS);
 
-            if (typeof carouselItems !== "undefined") {
+            if (typeof carouselItems !== "undefined" &&
+                carouselItems.length !== 0) {
                 //  Get max elements that the wrapper can show
                 let maxElementsToShow = parseInt(draggableCarouselWrapper.width() / carouselItems.width());
 

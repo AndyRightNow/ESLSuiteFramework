@@ -1,4 +1,4 @@
-/************************************
+  /************************************
 
   General style
 
@@ -34,7 +34,6 @@ a:hover,
 }
 
 
-
 /********************
   Padding and Margin
 *********************/
@@ -68,10 +67,12 @@ a:hover,
   padding-left: 5%;
   padding-right: 5%;
 }
+
 .paddinglr1 {
   padding-left: 1%;
   padding-right: 1%;
 }
+
 .marginlr {
   margin-left: 2%;
   margin-right: 2%;
@@ -86,6 +87,7 @@ a:hover,
   margin-left: 5%;
   margin-right: 5%;
 }
+
 .margintb {
   margin-top: 2%;
   margin-bottom: 2%;
@@ -94,7 +96,6 @@ a:hover,
 .marginauto {
   margin: auto;
 }
-
 
 
 /****************
@@ -168,6 +169,7 @@ a:hover,
 .whitetext {
   color: white;
 }
+
 .orangetext {
   color: #f89406;
 }
@@ -175,6 +177,7 @@ a:hover,
 .bluetext {
   color: #4183D7;
 }
+
 .bold {
   font-weight: bold;
 }
@@ -183,16 +186,19 @@ a:hover,
 /**********************************
   Classes for scroll show effects
 ***********************************/
+
 .scrollshow {
   opacity: 0;
 }
-.scrollshow-fadefrombottom{
+
+.scrollshow-fadefrombottom {
   transform: translateY(40%);
   -webkit-transform: translateY(40%);
   -o-transform: translateY(40%);
   -moz-transform: translateY(40%);
 }
-.scrollshow-scalein{
+
+.scrollshow-scalein {
   transform: scale(0);
   -webkit-transform: scale(0);
   -o-transform: scale(0);
@@ -203,47 +209,61 @@ a:hover,
 /****************
   Display
 *****************/
+
 .inlineblock {
   display: inline-block;
   vertical-align: middle;
 }
-.aligntop{
+
+.aligntop {
   vertical-align: top;
 }
-.alignbottom{
+
+.alignbottom {
   vertical-align: bottom;
 }
+
 
 /****************
   Widths
 *****************/
-.width10{
+
+.width10 {
   width: 10%;
 }
-.width20{
+
+.width20 {
   width: 20%;
 }
-.width30{
+
+.width30 {
   width: 30%;
 }
-.width40{
+
+.width40 {
   width: 40%;
 }
-.width50{
+
+.width50 {
   width: 50%;
 }
-.width60{
+
+.width60 {
   width: 60%;
 }
-.width70{
+
+.width70 {
   width: 70%;
 }
-.width80{
+
+.width80 {
   width: 80%;
 }
-.width90{
+
+.width90 {
   width: 90%;
 }
+
 
 /****************
   Header styling
@@ -267,6 +287,7 @@ a:hover,
 /********************
   Popped-over window
 *********************/
+
 .popoverbg {
   width: 100vw;
   height: 100vh;
@@ -276,9 +297,11 @@ a:hover,
   top: 0;
   left: 0;
 }
+
 .nooverflow {
   overflow: hidden;
 }
+
 .popoverwnd {
   position: relative;
   width: 60%;
@@ -290,34 +313,43 @@ a:hover,
   -o-transform: translate(-50%, -50%) scale(0, 0);
   -moz-transform: translate(-50%, -50%) scale(0, 0);
 }
+
 .none {
   display: none;
 }
 
+
 /***********************************
   Custom carousel: auto fading
 ***********************************/
-.opacity0{
+
+.opacity0 {
   opacity: 0;
 }
+
 
 /***********************************
   Custom carousel: draggable carousel
 ***********************************/
-.draggable-carousel{
+
+.draggable-carousel {
   overflow: hidden;
 }
-.draggable-carousel-item{
+
+.draggable-carousel-item {
   display: inline-block;
   vertical-align: middle;
 }
 
+
 /********************************
   Click to show hidden elements
 *********************************/
-.hiddenitem{
+
+.hiddenitem {
   display: none;
 }
+
 
 /***********************************
 
@@ -374,42 +406,6 @@ a:hover,
   /****************
     Widths
   *****************/
-.width10,
-.width20,
-.width30,
-.width40,
-.width50,
-.width60,
-.width70,
-.width80,
-.width90{
-  width: 90%;
-}
-
-
-/***********************************
-
-  Tablet compatibility
-
-***********************************/
-
-@media screen and (max-width: 992px) and (min-width: 601px) {
-  .headtitle {
-    font-size: 5vh;
-  }
-  .title {
-    font-size: 4vh;
-  }
-  .learnmore {
-    min-width: 0;
-    min-height: 0;
-    padding: 1vw 2vw;
-    font-size: 2.5vw;
-  }
-
-/****************
-  Widths
-*****************/
   .width10,
   .width20,
   .width30,
@@ -418,7 +414,39 @@ a:hover,
   .width60,
   .width70,
   .width80,
-  .width90{
-    width: 70%;
+  .width90 {
+    width: 90%;
   }
-}
+  /***********************************
+
+  Tablet compatibility
+
+***********************************/
+  @media screen and (max-width: 992px) and (min-width: 601px) {
+    .headtitle {
+      font-size: 5vh;
+    }
+    .title {
+      font-size: 4vh;
+    }
+    .learnmore {
+      min-width: 0;
+      min-height: 0;
+      padding: 1vw 2vw;
+      font-size: 2.5vw;
+    }
+    /****************
+  Widths
+*****************/
+    .width10,
+    .width20,
+    .width30,
+    .width40,
+    .width50,
+    .width60,
+    .width70,
+    .width80,
+    .width90 {
+      width: 70%;
+    }
+  }
