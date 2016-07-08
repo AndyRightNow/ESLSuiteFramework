@@ -144,26 +144,22 @@ $(document).ready(() => {
         const FADE_FROM_BOTTOM = "scrollshow-fadefrombottom";
         const SCALE_IN = "scrollshow-scalein";
         const SCROLL_SHOW = 'scrollshow';
-
+        const TRANSITION_600MS = "transition600ms";
         const TRANSITION_TIME = 600; //Transition time in millisecond
-        const TRANSITION_TIME_IN_SEC = TRANSITION_TIME / 1000; //Transition time in second
-
-        const TRANSITION_OBJECT = { //CSS Class object for showing element
-            "transition": "all " + TRANSITION_TIME_IN_SEC + "s ease-in-out",
-            "-webkit-transition": "all " + TRANSITION_TIME_IN_SEC + "s ease-in-out",
-            "-o-transition": "all " + TRANSITION_TIME_IN_SEC + "s ease-in-out",
-            "-moz-transition": "all " + TRANSITION_TIME_IN_SEC + "s ease-in-out"
-        };
 
         //  Flag used to indicate if current element is shown
         var isCurrentElementShown = false;
         //  Flag used to indicate if the next element can be fetched
         var canGetNextElement = true;
 
-        //  Keep count of 
-
         //  Current element to show
         var currElem;
+
+        //  A queue used to store the actions of removing transitions
+        var removeTransitionQueue = [];
+
+        //  Add transitions to all scrollshow elements
+        $("." + SCROLL_SHOW).addClass(TRANSITION_600MS);
 
         var ScrollToShowEventLoop = setInterval(() => {
 
@@ -190,7 +186,6 @@ $(document).ready(() => {
                 canGetNextElement = false;
             }
 
-
             if (!isCurrentElementShown) {
                 if (typeof currElem !== "undefined") {
                     //--------------------------------------------
@@ -201,9 +196,6 @@ $(document).ready(() => {
                         curEleBottom = $(currElem).offset().top + $(currElem).height();
 
                     if (windowBottom >= curEleBottom) {
-                        let styleStr = Utility.storeInlineCSS($(currElem)); // Store the inline css style
-
-                        Utility.addCSS($(currElem), TRANSITION_OBJECT); //Add css transition to elements
 
                         $(currElem).removeClass(SCROLL_SHOW); //Show default effect
 
@@ -215,19 +207,28 @@ $(document).ready(() => {
                         } else if ($(currElem).hasClass(SCALE_IN)) {
                             $(currElem).removeClass(SCALE_IN);
                         }
+
+                        //  Push into queue
+                        removeTransitionQueue.push(currElem);
+
                         //-----------------------------------------------
                         //  After the animation, restore the inline style
                         //  and set the flag to signal that the next element 
                         //  can be fetched.
                         //-----------------------------------------------
                         setTimeout(function() { 
-                            Utility.restoreInlineCSS($(currElem), styleStr);
-                            canGetNextElement = true;
+                            if (removeTransitionQueue.length > 0){
+                                let topEle = removeTransitionQueue[0];
+                                if (!$(topEle).hasClass(SCROLL_SHOW)){
+                                    $(topEle).removeClass(TRANSITION_600MS);
+                                    removeTransitionQueue.shift();
+                                }
+                            }
                         }, TRANSITION_TIME - 1);
 
+                        canGetNextElement = true;
                         isCurrentElementShown = true;
                     }
-
                 }
             }
         });
@@ -414,7 +415,7 @@ $(document).ready(() => {
                                 curPopCont = $("." + thisCont);
 
                                 //  Show the content
-                                curPopCont.toggleClass(NONE);
+                                curPopCont.removeClass(NONE);
                             }
                         });
                     }
