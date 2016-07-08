@@ -62,21 +62,6 @@ $(document).ready(() => {
         },
 
         //-------------------------------
-        //  Store and restore inline CSS
-        //-------------------------------
-        storeInlineCSS: function(jqueryObject) {
-            if (typeof jqueryObject !== "undefined") {
-                let styleStr = jqueryObject.attr('style');
-                return typeof styleStr !== "undefined" ? styleStr : "";
-            }
-        },
-        restoreInlineCSS: function(jqueryObject, styleStr) {
-            if (typeof jqueryObject !== "undefined" && typeof styleStr !== "undefined") {
-                jqueryObject.attr('style', styleStr);
-            }
-        },
-
-        //-------------------------------
         //  Check if it's mobile version
         //-------------------------------
         isMobile: function() {
@@ -212,7 +197,7 @@ $(document).ready(() => {
                         removeTransitionQueue.push(currElem);
 
                         //-----------------------------------------------
-                        //  After the animation, restore the inline style
+                        //  After the animation, remove the transition
                         //  and set the flag to signal that the next element 
                         //  can be fetched.
                         //-----------------------------------------------
@@ -225,7 +210,6 @@ $(document).ready(() => {
                                 }
                             }
                         }, TRANSITION_TIME - 1);
-
                         canGetNextElement = true;
                         isCurrentElementShown = true;
                     }
@@ -295,27 +279,8 @@ $(document).ready(() => {
         const NO_OVERFLOW = "nooverflow"; //  No vertical scrolling
         const POP_CONT_MAX = 50; //  Max popped out window content
         const NO_MOBILE = "popbtn-nomobile";
-
-        //-----------------------------------------------------------------
-        //  Check if a click event handler is bound to a set of elements. 
-        //  If not, return an array of elements that are not bound.
-        //  Else return null. 
-        //------------------------------------------------------------------
-        function getUnboundElements(className) {
-            var arr = [];
-            var DOMObjects = document.getElementsByClassName(className);
-            for (let i = 0; i < DOMObjects.length; i++) {
-                var e = $._data(DOMObjects[i], 'click');
-                if (!e || !e.click) {
-                    arr.push(DOMObjects[i]);
-                }
-            }
-            if (arr.length !== 0) {
-                return arr;
-            } else {
-                return null;
-            }
-        }
+        const MOBILE_WINDOW_WIDTH = "100vw";
+        const MOBILE_WINDOW_HEIGHT = "80vh";
 
         //----------------------
         //  Build HTML
@@ -374,23 +339,24 @@ $(document).ready(() => {
         //  Bind popbtn click events. It returns the button count
         //---------------------------------------------------------
         function bindButtonClickEvents() {
-            var buttonCount = 0;
-
             for (let i = 1; i <= POP_CONT_MAX; i++) {
+                //-----------------------------------------
+                //  Get the popbtn and popcont class name
+                //-----------------------------------------
                 let thisCont = "popcont" + i;
                 let thisBtn = "popbtn" + i;
 
-                buttonCount += $("." + thisBtn).length;
-                var unboundElements = getUnboundElements(thisBtn);
+                let thisBtnElements = $("." + thisBtn);
 
-                if (unboundElements !== null) {
-                    for (let j = 0; j < unboundElements.length; j++) {
-                        $(unboundElements[j]).click((event) => {
+                if (typeof thisBtnElements !== "undefined" &&
+                    thisBtnElements.length > 0) {
+                    for (let j = 0; j < thisBtnElements.length; j++) {
+                        $(thisBtnElements[j]).click((event) => {
                             //---------------------------------------------------
                             //  Adjust the size of the pop over window on mobile
                             //---------------------------------------------------
                             if (Utility.isMobile()) {
-                                wnd.css("width", "100vw").css("height", "80vh");
+                                wnd.css("width", MOBILE_WINDOW_WIDTH).css("height", MOBILE_WINDOW_HEIGHT);
                             }
 
                             //------------------------------------------------------------
@@ -398,8 +364,8 @@ $(document).ready(() => {
                             //  1. Not on mobile
                             //  2. On mobile and "popbtn-nomobile" not specified for the button
                             //------------------------------------------------------------
-                            if (!Utility.isMobile() ||
-                                Utility.isMobile() && !$("." + thisBtn).hasClass(NO_MOBILE)) {
+                            if ( !Utility.isMobile() ||
+                                (Utility.isMobile() && !$("." + thisBtn).hasClass(NO_MOBILE)) ) {
                                 event.preventDefault();
 
                                 //  Show backgournd
@@ -421,7 +387,6 @@ $(document).ready(() => {
                     }
                 }
             }
-            return buttonCount;
         }
 
         //---------------------------------------------
@@ -516,48 +481,73 @@ $(document).ready(() => {
         //-------------------------
         //  Constants
         //-------------------------
-        const ALL = "All",
-            HALF = "Half",
-            QUARTER = "Quarter";
-        const NUM_TO_SHOW = "num-to-show";
-        const HIDDEN_ITEM = "hiddenitem";
+        const   ALL = "All",
+                HALF = "Half",
+                QUARTER = "Quarter",
+                NUM_TO_SHOW = "num-to-show",
+                HIDDEN_ITEM = "hiddenitem";
 
-        var hiddenElements = $("." + HIDDEN_ITEM);
+        //  Hidden items
+        var hiddenItems = $("." + HIDDEN_ITEM);
+        //  Button to click to show
         var showBtn = $(".showhiddenitembtn");
+        //  How many element to show on one click
         var numToShow = ALL;
 
         //------------------------------------
         //  Get user specified number to show
         //------------------------------------
         var specifiedNumToShow = showBtn.attr(NUM_TO_SHOW);
-        if (typeof specifiedNumToShow !== "undefined") {
+        if (typeof specifiedNumToShow !== "undefined") {    //  If the attribute exists
+            //-----------------------------------
+            //  Check if the user input a number
+            //-----------------------------------
             let thisNum = parseInt(specifiedNumToShow);
             if (!isNaN(thisNum)) {
                 numToShow = thisNum;
-            } else {
+            }
+            else {
+                //-----------------------------------------------
+                //  Else check if the input is valid string value
+                //------------------- ----------------------------
                 switch (specifiedNumToShow) {
                     case HALF:
-                        numToShow = hiddenElements.length / 2;
+                        numToShow = hiddenItems.length / 2;
                         break;
                     case QUARTER:
-                        numToShow = hiddenElements.length / 4;
+                        numToShow = hiddenItems.length / 4;
                         break;
                 }
             }
         }
 
         showBtn.click((event) => {
-            if (hiddenElements.length > 0) {
-                if (numToShow === ALL || hiddenElements.length <= numToShow) {
-                    hiddenElements.removeClass(HIDDEN_ITEM);
+            //-----------------------------------------------
+            //  Check if there is still any hidden element 
+            //-----------------------------------------------
+            if (hiddenItems.length > 0) {
+                //--------------------------------------------
+                //  If the number to show is larger than 
+                //  the current hidden elements count or
+                //  the ALL macro is specified
+                //--------------------------------------------
+                if (numToShow === ALL || 
+                    hiddenItems.length <= numToShow) {
+                    hiddenItems.removeClass(HIDDEN_ITEM);
                     showBtn.addClass(NONE);
-                } else {
+                } 
+                //---------------------------
+                //  Eles show the elements based
+                //  on the number to show
+                //---------------------------
+                else {
                     for (let i = 0; i < numToShow; i++) {
-                        $(hiddenElements[i]).removeClass(HIDDEN_ITEM);
+                        $(hiddenItems[i]).removeClass(HIDDEN_ITEM);
                     }
                 }
             }
-            hiddenElements = $("." + HIDDEN_ITEM);
+            //  Update the hidden elements collection
+            hiddenItems = $("." + HIDDEN_ITEM);
         });
     })();
 
