@@ -336,14 +336,14 @@ a:hover,
 
 
 /***********************************
-  Custom carousel: draggable carousel
+  Custom carousel: scroll carousel
 ***********************************/
 
-.draggable-carousel {
+.scroll-carousel {
   overflow: hidden;
 }
 
-.draggable-carousel-item {
+.scroll-carousel-item {
   display: inline-block;
   vertical-align: middle;
 }

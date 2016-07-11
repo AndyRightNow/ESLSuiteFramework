@@ -201,10 +201,10 @@ $(document).ready(() => {
                         //  and set the flag to signal that the next element 
                         //  can be fetched.
                         //-----------------------------------------------
-                        setTimeout(function() { 
-                            if (removeTransitionQueue.length > 0){
+                        setTimeout(function() {
+                            if (removeTransitionQueue.length > 0) {
                                 let topEle = removeTransitionQueue[0];
-                                if (!$(topEle).hasClass(SCROLL_SHOW)){
+                                if (!$(topEle).hasClass(SCROLL_SHOW)) {
                                     $(topEle).removeClass(TRANSITION_600MS);
                                     removeTransitionQueue.shift();
                                 }
@@ -364,8 +364,8 @@ $(document).ready(() => {
                             //  1. Not on mobile
                             //  2. On mobile and "popbtn-nomobile" not specified for the button
                             //------------------------------------------------------------
-                            if ( !Utility.isMobile() ||
-                                (Utility.isMobile() && !$("." + thisBtn).hasClass(NO_MOBILE)) ) {
+                            if (!Utility.isMobile() ||
+                                (Utility.isMobile() && !$("." + thisBtn).hasClass(NO_MOBILE))) {
                                 event.preventDefault();
 
                                 //  Show backgournd
@@ -481,11 +481,11 @@ $(document).ready(() => {
         //-------------------------
         //  Constants
         //-------------------------
-        const   ALL = "All",
-                HALF = "Half",
-                QUARTER = "Quarter",
-                NUM_TO_SHOW = "num-to-show",
-                HIDDEN_ITEM = "hiddenitem";
+        const ALL = "All",
+            HALF = "Half",
+            QUARTER = "Quarter",
+            NUM_TO_SHOW = "num-to-show",
+            HIDDEN_ITEM = "hiddenitem";
 
         //  Hidden items
         var hiddenItems = $("." + HIDDEN_ITEM);
@@ -498,15 +498,14 @@ $(document).ready(() => {
         //  Get user specified number to show
         //------------------------------------
         var specifiedNumToShow = showBtn.attr(NUM_TO_SHOW);
-        if (typeof specifiedNumToShow !== "undefined") {    //  If the attribute exists
+        if (typeof specifiedNumToShow !== "undefined") { //  If the attribute exists
             //-----------------------------------
             //  Check if the user input a number
             //-----------------------------------
             let thisNum = parseInt(specifiedNumToShow);
             if (!isNaN(thisNum)) {
                 numToShow = thisNum;
-            }
-            else {
+            } else {
                 //-----------------------------------------------
                 //  Else check if the input is valid string value
                 //------------------- ----------------------------
@@ -531,11 +530,11 @@ $(document).ready(() => {
                 //  the current hidden elements count or
                 //  the ALL macro is specified
                 //--------------------------------------------
-                if (numToShow === ALL || 
+                if (numToShow === ALL ||
                     hiddenItems.length <= numToShow) {
                     hiddenItems.removeClass(HIDDEN_ITEM);
                     showBtn.addClass(NONE);
-                } 
+                }
                 //---------------------------
                 //  Eles show the elements based
                 //  on the number to show
@@ -855,23 +854,26 @@ $(document).ready(() => {
 
     //--------------------------------------------------
     // 
-    //  Draggable carousel
+    //  Scrolling Carousel
     //
     //  Usage: 
     //  
-    //  Add CSS class "draggable-carousel" to the 
-    //  wrapper of carousel items and add "draggable-carousel-item" to the 
-    //  items of carousel. Items should be of the same width
+    //  Add CSS class "scroll-carousel" to the 
+    //  wrapper of carousel items and add "scroll-carousel-item" to the 
+    //  items of carousel. Items should all have the same width
     //  and height. 
-    //  
+    //
     //  Add CSS class "carousel-control-left" and "carousel-control-right"
     //  to elements you want to use as left and right control for the 
     //  carousel. It will shift to left/right for 1 element for every click.
     //
-    //  Set attribute "carousel-auto-play='On'" in the wrapper "draggable-carousel"  
+    //  Set attribute "carousel-draggable='On'" in the wrapper "scroll-carousel"  
+    //  to enable draggable, and "Off" to disable. The default value is "Off".
+    //
+    //  Set attribute "carousel-auto-play='On'" in the wrapper "scroll-carousel"  
     //  to enable auto playing, and "Off" to disable. The default value is "Off".
     //
-    //  Set attribute "carousel-auto-play-speed='x'" in the wrapper "draggable-carousel"
+    //  Set attribute "carousel-auto-play-speed='x'" in the wrapper "scroll-carousel"
     //  to change the play speed. X can be any non-negative number. Default speed is 0.5.
     //
     //--------------------------------------------------
@@ -887,11 +889,15 @@ $(document).ready(() => {
         //-------------------------
         //  Names constants
         //-------------------------
-        const DRAGGABLE_CAROUSEL_WRAPPER_CALSS = ".draggable-carousel";
-        const DRAGGABLE_CAROUSEL_INNER_WRAPPER_CALSS = ".draggable-carouse-inner";
-        const DRAGGABLE_CAROUSEL_ITEM_CALSS = ".draggable-carousel-item";
+        const SCROLL_CAROUSEL_WRAPPER_CALSS = ".scroll-carousel";
+        const SCROLL_CAROUSEL_INNER_WRAPPER_CALSS = ".scroll-carousel-inner";
+        const SCROLL_CAROUSEL_ITEM_CALSS = ".scroll-carousel-item";
         const CAROUSEL_AUTO_PLAY_ATTR = "carousel-auto-play";
         const CAROUSEL_AUTO_PLAY_SPEED_ATTR = "carousel-auto-play-speed";
+        const CAROUSEL_DRAGGABLE_ATTR = "carousel-draggable";
+
+        //  Drag factor used to make dragging action identical to the movement caused by dragging
+        const DRAG_FACTOR = 0.5;
 
         //  Threshold value for auto play loop to match the reset position
         const LOOP_RESET_THRESHOLD = 1;
@@ -899,8 +905,8 @@ $(document).ready(() => {
         //--------------------------------------------
         //  Function scoped variables declarations
         //--------------------------------------------
-        var draggableCarouselInnerWrapper,
-            draggableCarouselWrapper,
+        var scrollCarouselInnerWrapper,
+            scrollCarouselWrapper,
             carouselItems;
 
         //  Flag to record if the mouse events are bound
@@ -912,8 +918,11 @@ $(document).ready(() => {
             currentMousePos = new Position(0, 0),
             draggingMousePos = new Position(0, 0);
 
-        //  Variable to check if mouse is dragging
+        //  Flag to check if mouse is dragging
         var isDragging = false;
+
+        //  Flag to indicate if the carousel is draggable
+        var isDraggable = false;
 
         //-------------------------------------------
         //  Bind event listener to the carousel items
@@ -924,8 +933,10 @@ $(document).ready(() => {
                 if (typeof objectsToBind !== "undefined" ||
                     objectsToBind.length !== 0) {
                     objectsToBind.find('*').css("pointer-events", "none");
-                    objectsToBind.mouseenter(() => { mouseIn = true; });
-                    objectsToBind.mouseout(() => { mouseIn = false; });
+                    objectsToBind.mouseenter(() => { mouseIn = true;
+                        mouseDown = false; });
+                    objectsToBind.mouseout(() => { mouseIn = false;
+                        mouseDown = false; });
                     objectsToBind.mousedown(() => {
                         mouseDown = true;
                         mouseUp = false;
@@ -940,45 +951,50 @@ $(document).ready(() => {
         }
 
         //  Handle to the draggable carousel wrapper
-        draggableCarouselWrapper = $(DRAGGABLE_CAROUSEL_WRAPPER_CALSS);
+        scrollCarouselWrapper = $(SCROLL_CAROUSEL_WRAPPER_CALSS);
 
-        if (typeof draggableCarouselWrapper !== "undefined" &&
-            draggableCarouselWrapper.length !== 0) {
+        if (typeof scrollCarouselWrapper !== "undefined" &&
+            scrollCarouselWrapper.length !== 0) {
             //  Handle to the draggable carousel items array
-            carouselItems = draggableCarouselWrapper.find(DRAGGABLE_CAROUSEL_ITEM_CALSS);
+            carouselItems = scrollCarouselWrapper.find(SCROLL_CAROUSEL_ITEM_CALSS);
+
+            //--------------------------------------------------
+            //  Check if the draggable attribute is specified
+            //--------------------------------------------------
+            if (scrollCarouselWrapper.attr(CAROUSEL_DRAGGABLE_ATTR) == "On"){
+                isDraggable = true;
+            }
 
             if (typeof carouselItems !== "undefined" &&
                 carouselItems.length !== 0) {
                 //  Get max elements that the wrapper can show
-                let maxElementsToShow = parseInt(draggableCarouselWrapper.width() / carouselItems.width());
+                let maxElementsToShow = parseInt(scrollCarouselWrapper.width() / carouselItems.width());
 
                 //------------------------------------
                 //  Create a inner wrapper for items
                 //------------------------------------
-                let innerWrapper = "<div class='draggable-carouse-inner'></div>";
-                $(innerWrapper).prependTo(DRAGGABLE_CAROUSEL_WRAPPER_CALSS);
+                let innerWrapper = "<div class='scroll-carousel-inner'></div>";
+                $(innerWrapper).prependTo(SCROLL_CAROUSEL_WRAPPER_CALSS);
 
                 //  Handle to the inner items wrapper
-                draggableCarouselInnerWrapper = $(DRAGGABLE_CAROUSEL_INNER_WRAPPER_CALSS);
+                scrollCarouselInnerWrapper = $(SCROLL_CAROUSEL_INNER_WRAPPER_CALSS);
 
                 //---------------------------------------
                 //  Check if auto-playing is specified
                 //---------------------------------------
-                let isAutoPlay = draggableCarouselWrapper.attr(CAROUSEL_AUTO_PLAY_ATTR);
+                let isAutoPlay = scrollCarouselWrapper.attr(CAROUSEL_AUTO_PLAY_ATTR);
                 isAutoPlay = typeof isAutoPlay === "undefined" || isAutoPlay == "Off" ?
                     false : isAutoPlay === "On" ? true : false;
 
-                if (isAutoPlay) {
-                    //------------------------------------------------------------------------------------
-                    //  Copy the first maxElementsToShow elements to append to the end of the wrapper
-                    //------------------------------------------------------------------------------------
-                    for (let i = 0; i < maxElementsToShow; i++) {
-                        $(carouselItems[i]).clone().appendTo(draggableCarouselWrapper);
-                    }
-
-                    //  Update the handle to items
-                    carouselItems = $(DRAGGABLE_CAROUSEL_ITEM_CALSS);
+                //------------------------------------------------------------------------------------
+                //  Copy the first maxElementsToShow elements to append to the end of the wrapper
+                //  and update the handle to idems
+                //------------------------------------------------------------------------------------
+                for (let i = 0; i < maxElementsToShow; i++) {
+                    $(carouselItems[i]).clone().appendTo(scrollCarouselWrapper);
                 }
+                carouselItems = $(SCROLL_CAROUSEL_ITEM_CALSS);
+
                 //  The count of elements before adding the extra elements for auto playing
                 var originalElementsCount = carouselItems.length - maxElementsToShow;
 
@@ -996,10 +1012,10 @@ $(document).ready(() => {
                     "-o-transform": "translateY(-50%)",
                     "-moz-transform": "translateY(-50%)",
                 };
-                Utility.addCSS(draggableCarouselInnerWrapper, innerWrapperCSS);
+                Utility.addCSS(scrollCarouselInnerWrapper, innerWrapperCSS);
 
                 //  Move items into the inner wrapper
-                carouselItems.appendTo(DRAGGABLE_CAROUSEL_INNER_WRAPPER_CALSS);
+                carouselItems.appendTo(SCROLL_CAROUSEL_INNER_WRAPPER_CALSS);
 
                 //-------------------------------
                 //  Carousel draggable event
@@ -1020,39 +1036,45 @@ $(document).ready(() => {
                 bindMouseEvents();
 
                 //  Get user specified loop speed
-                var loopSpeed = Utility.getAttrAsNumber(draggableCarouselWrapper, CAROUSEL_AUTO_PLAY_SPEED_ATTR);
+                var loopSpeed = Utility.getAttrAsNumber(scrollCarouselWrapper, CAROUSEL_AUTO_PLAY_SPEED_ATTR);
                 loopSpeed = isNaN(loopSpeed) ? 0.5 : loopSpeed;
 
                 //  Position where to reset the carousel's left postion
                 var resetPos = originalElementsCount * $(carouselItems[0]).outerWidth(true);
 
                 //  Starting left position
-                const startPos = Utility.getCSSAsNumber(draggableCarouselInnerWrapper, "left");
+                const startPos = Utility.getCSSAsNumber(scrollCarouselInnerWrapper, "left");
 
                 //----------------------------
                 //  Carousel loop
                 //----------------------------
-                var draggableCarouselEventLoop = setInterval(() => {
+                var scrollCarouselEventLoop = setInterval(() => {
                     //  Current left position of the inner wrapper
-                    var currentPos = Utility.getCSSAsNumber(draggableCarouselInnerWrapper, "left");
+                    var currentPos = Utility.getCSSAsNumber(scrollCarouselInnerWrapper, "left");
 
-                    if (!isDragging) {
+
+                    if (!isDraggable){
                         if (isAutoPlay) {
                             //  Update the current position if auto playing is specified
                             currentPos -= loopSpeed;
                         }
-                    } else {
-                        currentPos += (0.5 * (currentMousePos.x - lastMousePos.x));
+                    }
+                    else{
+                        if (!isDragging && isAutoPlay) {
+                            currentPos -= loopSpeed;
+                        }
+                        else if (isDragging){
+                            currentPos += (0.5 * (currentMousePos.x - lastMousePos.x));
+                        }
                     }
 
                     //----------------------------------
                     //  Check if it hits the bound, then 
                     //  reset the position. 
                     //----------------------------------
-                    if (Utility.isInRange(
-                            Math.abs(currentPos),
-                            resetPos - LOOP_RESET_THRESHOLD,
-                            resetPos + LOOP_RESET_THRESHOLD)) {
+                    if (Utility.isInRange(Math.abs(currentPos),
+                                          resetPos - LOOP_RESET_THRESHOLD,
+                                          resetPos + LOOP_RESET_THRESHOLD)) {
                         currentPos = 0;
                     }
 
@@ -1060,7 +1082,7 @@ $(document).ready(() => {
                     currentPos = Utility.clamp(currentPos, -resetPos, startPos);
 
                     //  Apply the left position
-                    draggableCarouselInnerWrapper.css("left", currentPos);
+                    scrollCarouselInnerWrapper.css("left", currentPos);
                 });
             }
         }
