@@ -42,14 +42,14 @@ $(document).ready(() => {
     //----------------------------------
     //  Global constants
     //----------------------------------
-    const NONE = "none"; //  Display none
-    const OPACITY_0 = "opacity0";
-    const MOBILE_WIDTH = 601; //  Mobile screen width
+    const NONE          =   "none"; //  Display none
+    const OPACITY_0     =   "opacity0";
+    const MOBILE_WIDTH  =   601; //  Mobile screen width
 
     //----------------------------
     //  Utility namespace
     //----------------------------
-    var Utility = {
+    var Util = {
         //---------------------------------------
         //  Add CSS Class object to the DOM
         //---------------------------------------
@@ -126,11 +126,11 @@ $(document).ready(() => {
     //        2. You can only use one effect class at a time.
     //--------------------------------------------------------------------------------
     (function() {
-        const FADE_FROM_BOTTOM = "scrollshow-fadefrombottom";
-        const SCALE_IN = "scrollshow-scalein";
-        const SCROLL_SHOW = 'scrollshow';
-        const TRANSITION_600MS = "transition600ms";
-        const TRANSITION_TIME = 600; //Transition time in millisecond
+        const FADE_FROM_BOTTOM  =   "scrollshow-fadefrombottom";
+        const SCALE_IN          =   "scrollshow-scalein";
+        const SCROLL_SHOW       =   'scrollshow';
+        const TRANSITION_600MS  =   "transition600ms";
+        const TRANSITION_TIME   =   600; //Transition time in millisecond
 
         //  Flag used to indicate if current element is shown
         var isCurrentElementShown = false;
@@ -150,7 +150,7 @@ $(document).ready(() => {
 
             //--------------------------------------
             //  Get the collection of elements with
-            //  class "scrollshow". If the collection's
+            //  class "scrollshow" and check if the collection's
             //  length equals to zero or the collection is 
             //  undefined, clear the interval.
             //--------------------------------------
@@ -180,9 +180,11 @@ $(document).ready(() => {
                     let windowBottom = $(window).scrollTop() + $(window).height(),
                         curEleBottom = $(currElem).offset().top + $(currElem).height();
 
-                    if (windowBottom >= curEleBottom) {
+                    //If the bottom of the window goes under the bottom of the element
+                    if (windowBottom >= curEleBottom) { 
 
-                        $(currElem).removeClass(SCROLL_SHOW); //Show default effect
+                        //Show default effect
+                        $(currElem).removeClass(SCROLL_SHOW); 
 
                         //------------------
                         //  Switch effects
@@ -204,12 +206,13 @@ $(document).ready(() => {
                         setTimeout(function() {
                             if (removeTransitionQueue.length > 0) {
                                 let topEle = removeTransitionQueue[0];
+                                //  Check if the element is shown
                                 if (!$(topEle).hasClass(SCROLL_SHOW)) {
                                     $(topEle).removeClass(TRANSITION_600MS);
                                     removeTransitionQueue.shift();
                                 }
                             }
-                        }, TRANSITION_TIME - 1);
+                        }, TRANSITION_TIME);
                         canGetNextElement = true;
                         isCurrentElementShown = true;
                     }
@@ -273,14 +276,19 @@ $(document).ready(() => {
         //-------------
         //  Constants
         //-------------
-        const SHOW_PROP = "translate(-50%, -50%) scale(1)"; //  Property used to show the window
-        const HIDE_PROP = "translate(-50%, -50%) scale(0)"; //  Property used to hide the window
-        const ANIMATE_TIME = 400; //  Window animate time
-        const NO_OVERFLOW = "nooverflow"; //  No vertical scrolling
-        const POP_CONT_MAX = 50; //  Max popped out window content
-        const NO_MOBILE = "popbtn-nomobile";
-        const MOBILE_WINDOW_WIDTH = "100vw";
-        const MOBILE_WINDOW_HEIGHT = "80vh";
+        const SHOW_PROP             =    "translate(-50%, -50%) scale(1)", //  Property used to show the window
+              HIDE_PROP             =    "translate(-50%, -50%) scale(0)", //  Property used to hide the window
+              ANIMATE_TIME          =    400, //  Window animate time
+              NO_OVERFLOW           =    "nooverflow", //  No vertical scrolling
+              POP_CONT_MAX          =    50, //  Max popped out window content
+              POP_BUTTON_NO_MOBILE  =    "popbtn-nomobile",
+              MOBILE_WINDOW_WIDTH   =    "100vw",
+              MOBILE_WINDOW_HEIGHT  =    "80vh",
+              POP_OVER_BACKGROUND   =    "popoverbg",
+              POP_OVER_WINDOW       =    "popoverwnd",
+              POP_OVER_CONTENT      =    "popovercontent",
+              POP_BTN               =    "popbtn",
+              POP_CONT              =    "popcont";
 
         //----------------------
         //  Build HTML
@@ -289,32 +297,32 @@ $(document).ready(() => {
             //--------------------------
             //  Build outer background
             //--------------------------
-            var bg = "<div class='popoverbg none'></div>";
+            var bg = "<div class='" + POP_OVER_BACKGROUND + " " + NONE + "'></div>";
             $(bg).appendTo('body');
 
             //--------------------------
             //  Build popped-out window
             //--------------------------
-            var wnd = "<div class='popoverwnd whiteback text-center'></div>";
-            $(wnd).appendTo('.popoverbg');
+            var wnd = "<div class='" + POP_OVER_WINDOW + " whiteback text-center'></div>";
+            $(wnd).appendTo("." + POP_OVER_BACKGROUND);
 
             //---------------------------
             //  Build close button
             //---------------------------
             var closebtn = "<div class='close glyphicon glyphicon-remove'></div>";
-            $(closebtn).appendTo('.popoverwnd');
+            $(closebtn).appendTo("." + POP_OVER_WINDOW);
 
             //---------------------------
             //  Append content
             //---------------------------
-            $(".popovercontent").appendTo('.popoverwnd').removeClass(NONE);
+            $("." + POP_OVER_CONTENT).appendTo("." + POP_OVER_WINDOW).removeClass(NONE);
         })();
 
         //-------------------------------
         //  Popped out window jquery vars
         //-------------------------------
-        var background = $('.popoverbg'),
-            wnd = $('.popoverwnd'),
+        var background = $("." + POP_OVER_BACKGROUND),
+            wnd = $("." + POP_OVER_WINDOW),
             close = $('.close');
 
         //  Currrent popped out content
@@ -343,10 +351,9 @@ $(document).ready(() => {
                 //-----------------------------------------
                 //  Get the popbtn and popcont class name
                 //-----------------------------------------
-                let thisCont = "popcont" + i;
-                let thisBtn = "popbtn" + i;
-
-                let thisBtnElements = $("." + thisBtn);
+                let thisCont        =   POP_CONT + i,
+                    thisBtn         =   POP_BTN + i,
+                    thisBtnElements =   $("." + thisBtn);
 
                 if (typeof thisBtnElements !== "undefined" &&
                     thisBtnElements.length > 0) {
@@ -355,7 +362,7 @@ $(document).ready(() => {
                             //---------------------------------------------------
                             //  Adjust the size of the pop over window on mobile
                             //---------------------------------------------------
-                            if (Utility.isMobile()) {
+                            if (Util.isMobile()) {
                                 wnd.css("width", MOBILE_WINDOW_WIDTH).css("height", MOBILE_WINDOW_HEIGHT);
                             }
 
@@ -364,8 +371,8 @@ $(document).ready(() => {
                             //  1. Not on mobile
                             //  2. On mobile and "popbtn-nomobile" not specified for the button
                             //------------------------------------------------------------
-                            if (!Utility.isMobile() ||
-                                (Utility.isMobile() && !$("." + thisBtn).hasClass(NO_MOBILE))) {
+                            if (!Util.isMobile() ||
+                                (Util.isMobile() && !$("." + thisBtn).hasClass(POP_BUTTON_NO_MOBILE))) {
                                 event.preventDefault();
 
                                 //  Show backgournd
@@ -394,7 +401,7 @@ $(document).ready(() => {
         //---------------------------------------------
         function clearButtonClickEvents() {
             for (let i = 1; i <= POP_CONT_MAX; i++) {
-                let thisBtn = ".popbtn" + i;
+                let thisBtn = "." + POP_BTN + i;
                 $(thisBtn).off("click");
             }
         }
@@ -403,7 +410,7 @@ $(document).ready(() => {
         //  Hide all the content
         //-----------------------------
         for (let i = 1; i <= POP_CONT_MAX; i++) {
-            let thisContClass = "." + "popcont" + i;
+            let thisContClass = "." + POP_CONT + i;
             if (!$(thisContClass).hasClass(NONE)) {
                 $(thisContClass).addClass(NONE);
             }
@@ -481,18 +488,18 @@ $(document).ready(() => {
         //-------------------------
         //  Constants
         //-------------------------
-        const ALL = "All",
-            HALF = "Half",
-            QUARTER = "Quarter",
-            NUM_TO_SHOW = "num-to-show",
-            HIDDEN_ITEM = "hiddenitem";
+        const ALL           =   "All",
+              HALF          =   "Half",
+              QUARTER       =   "Quarter",
+              NUM_TO_SHOW   =   "num-to-show",
+              HIDDEN_ITEM   =   "hiddenitem";
 
         //  Hidden items
-        var hiddenItems = $("." + HIDDEN_ITEM);
+        var hiddenItems =   $("." + HIDDEN_ITEM);
         //  Button to click to show
-        var showBtn = $(".showhiddenitembtn");
+        var showBtn     =   $(".showhiddenitembtn");
         //  How many element to show on one click
-        var numToShow = ALL;
+        var numToShow   =   ALL;
 
         //------------------------------------
         //  Get user specified number to show
@@ -565,20 +572,20 @@ $(document).ready(() => {
     //  to the largest element of the items.
     //--------------------------------------------------
     (function() {
-        var items = $(".auto-fade-item"),
-            index = 0, //  Loop index among all items
-            maxHeight = 0;
+        var items       =   $(".auto-fade-item"),
+            index       =   0, //  Loop index among all items
+            maxHeight   =   0;
 
-        const INTERVAL_TIME = 7000, //Time period for setInterval
-            TRANSITION_TIME = 400, //Time period of css transition
-            AUTO_ADJUST_HEIGHT = "auto-adjust-height";
+        const INTERVAL_TIME         =   7000, //Time period for setInterval
+              TRANSITION_TIME       =   400, //Time period of css transition
+              AUTO_ADJUST_HEIGHT    =   "auto-adjust-height";
 
         if (items.length > 0) {
             //--------------------------------------------------------
             //  Add transition. Show the first item and hide others
             //--------------------------------------------------------
-            items.addClass('transition').addClass('opacity0').addClass('none');
-            $(items[index]).removeClass('none').removeClass('opacity0');
+            items.addClass('transition').addClass(OPACITY_0).addClass(NONE);
+            $(items[index]).removeClass(NONE).removeClass(OPACITY_0);
 
             var autoFadeCarouselInterval = setInterval(() => {
                     //--------------------------------------------------------------
@@ -687,34 +694,34 @@ $(document).ready(() => {
         //-------------------------------------------
         //  Count down display class names constants
         //-------------------------------------------
-        const COUNT_DOWN_YEAR = "count-down-year";
-        const COUNT_DOWN_MONTH = "count-down-month";
-        const COUNT_DOWN_DAY = "count-down-day";
-        const COUNT_DOWN_HOUR = "count-down-hour";
-        const COUNT_DOWN_MINUTE = "count-down-minute";
-        const COUNT_DOWN_SECOND = "count-down-second";
-        const COUNT_DOWN_YEAR_CLASS = ".count-down-year";
-        const COUNT_DOWN_MONTH_CLASS = ".count-down-month";
-        const COUNT_DOWN_DAY_CLASS = ".count-down-day";
-        const COUNT_DOWN_HOUR_CLASS = ".count-down-hour";
-        const COUNT_DOWN_MINUTE_CLASS = ".count-down-minute";
-        const COUNT_DOWN_SECOND_CLASS = ".count-down-second";
+        const COUNT_DOWN_YEAR          =    "count-down-year",
+              COUNT_DOWN_MONTH         =    "count-down-month",
+              COUNT_DOWN_DAY           =    "count-down-day",
+              COUNT_DOWN_HOUR          =    "count-down-hour",
+              COUNT_DOWN_MINUTE        =    "count-down-minute",
+              COUNT_DOWN_SECOND        =    "count-down-second",
+              COUNT_DOWN_YEAR_CLASS    =    ".count-down-year",
+              COUNT_DOWN_MONTH_CLASS   =    ".count-down-month",
+              COUNT_DOWN_DAY_CLASS     =    ".count-down-day",
+              COUNT_DOWN_HOUR_CLASS    =    ".count-down-hour",
+              COUNT_DOWN_MINUTE_CLASS  =    ".count-down-minute",
+              COUNT_DOWN_SECOND_CLASS  =    ".count-down-second",
 
-        const COUNT_DOWN_STATE_ATTR = "count-down-state";
-        const COUNT_DOWN_START_ATTR = "count-down-start";
-        const COUNT_DOWN_END_ATTR = "count-down-end";
-        const TIME_ZONE_ATTR = "time-zone";
+              COUNT_DOWN_STATE_ATTR    =    "count-down-state",
+              COUNT_DOWN_START_ATTR    =    "count-down-start",
+              COUNT_DOWN_END_ATTR      =    "count-down-end",
+              TIME_ZONE_ATTR           =    "time-zone",
 
-        const COUNT_DOWN_WRAPPER_CLASS = ".count-down";
+              COUNT_DOWN_WRAPPER_CLASS =    ".count-down";
 
         //---------------------------------
         //  Conversion constants
         //---------------------------------
-        const YEAR_SEC = 31536000;
-        const MONTH_SEC = 2592000;
-        const DAY_SEC = 86400;
-        const HOUR_SEC = 3600;
-        const MIN_SEC = 60;
+        const   YEAR_SEC          =   31536000,
+                MONTH_SEC         =   2592000,
+                DAY_SEC           =   86400,
+                HOUR_SEC          =   3600,
+                MIN_SEC           =   60;
 
         //---------------------------------------------------------------------------
         //  UTC date variables and a helper function used to get current UTC date
@@ -792,7 +799,7 @@ $(document).ready(() => {
                 //  Get time zone information specified by user
                 //  If unspecified or invalid, set time zone to 0
                 //-----------------------------------------------
-                let timeZone = Utility.getAttrAsNumber(TIME_ZONE_ATTR);
+                let timeZone = Util.getAttrAsNumber(TIME_ZONE_ATTR);
                 if (!isNaN(timeZone)) {
                     if (timeZone > 12 || timeZone < -12) {
                         timeZone = 0;
@@ -889,40 +896,37 @@ $(document).ready(() => {
         //-------------------------
         //  Names constants
         //-------------------------
-        const SCROLL_CAROUSEL_WRAPPER_CALSS = ".scroll-carousel";
-        const SCROLL_CAROUSEL_INNER_WRAPPER_CALSS = ".scroll-carousel-inner";
-        const SCROLL_CAROUSEL_ITEM_CALSS = ".scroll-carousel-item";
-        const CAROUSEL_AUTO_PLAY_ATTR = "carousel-auto-play";
-        const CAROUSEL_AUTO_PLAY_SPEED_ATTR = "carousel-auto-play-speed";
-        const CAROUSEL_DRAGGABLE_ATTR = "carousel-draggable";
+        const SCROLL_CAROUSEL_WRAPPER_CALSS         = ".scroll-carousel",
+              SCROLL_CAROUSEL_INNER_WRAPPER_CALSS   = ".scroll-carousel-inner",
+              SCROLL_CAROUSEL_ITEM_CALSS            = ".scroll-carousel-item",
+              CAROUSEL_AUTO_PLAY_ATTR               = "carousel-auto-play",
+              CAROUSEL_AUTO_PLAY_SPEED_ATTR         = "carousel-auto-play-speed",
+              CAROUSEL_DRAGGABLE_ATTR               = "carousel-draggable",
 
         //  Drag factor used to make dragging action identical to the movement caused by dragging
-        const DRAG_FACTOR = 0.5;
+              DRAG_FACTOR                           = 0.5,
 
         //  Threshold value for auto play loop to match the reset position
-        const LOOP_RESET_THRESHOLD = 1;
+              LOOP_RESET_THRESHOLD                  = 1;
 
         //--------------------------------------------
         //  Function scoped variables declarations
         //--------------------------------------------
         var scrollCarouselInnerWrapper,
             scrollCarouselWrapper,
-            carouselItems;
-
+            carouselItems,
         //  Flag to record if the mouse events are bound
-        var isEventBound = false;
+            isEventBound                                        = false,
         //  Flags to record mouse states
-        var mouseUp, mouseDown, mouseIn, mouseOut, mouseMove;
+            mouseUp, mouseDown, mouseIn, mouseOut, mouseMove,
         //  Mouse positions
-        var lastMousePos = new Position(0, 0),
-            currentMousePos = new Position(0, 0),
-            draggingMousePos = new Position(0, 0);
-
+            lastMousePos                                        = new Position(0, 0),
+            currentMousePos                                     = new Position(0, 0),
+            draggingMousePos                                    = new Position(0, 0),
         //  Flag to check if mouse is dragging
-        var isDragging = false;
-
+            isDragging                                          = false,
         //  Flag to indicate if the carousel is draggable
-        var isDraggable = false;
+            isDraggable                                         = false;
 
         //-------------------------------------------
         //  Bind event listener to the carousel items
@@ -932,10 +936,12 @@ $(document).ready(() => {
                 let objectsToBind = carouselItems;
                 if (typeof objectsToBind !== "undefined" ||
                     objectsToBind.length !== 0) {
-                    objectsToBind.find('*').css("pointer-events", "none");
-                    objectsToBind.mouseenter(() => { mouseIn = true;
+                    objectsToBind.find('*').css("pointer-events", NONE);
+                    objectsToBind.mouseenter(() => { 
+                        mouseIn = true;
                         mouseDown = false; });
-                    objectsToBind.mouseout(() => { mouseIn = false;
+                    objectsToBind.mouseout(() => { 
+                        mouseIn = false;
                         mouseDown = false; });
                     objectsToBind.mousedown(() => {
                         mouseDown = true;
@@ -1012,7 +1018,7 @@ $(document).ready(() => {
                     "-o-transform": "translateY(-50%)",
                     "-moz-transform": "translateY(-50%)",
                 };
-                Utility.addCSS(scrollCarouselInnerWrapper, innerWrapperCSS);
+                Util.addCSS(scrollCarouselInnerWrapper, innerWrapperCSS);
 
                 //  Move items into the inner wrapper
                 carouselItems.appendTo(SCROLL_CAROUSEL_INNER_WRAPPER_CALSS);
@@ -1021,13 +1027,13 @@ $(document).ready(() => {
                 //  Carousel draggable event
                 //-------------------------------
                 carouselItems.mousemove((event) => {
-                    lastMousePos.x = currentMousePos.x;
-                    lastMousePos.y = currentMousePos.y;
+                    lastMousePos.x      = currentMousePos.x;
+                    lastMousePos.y      = currentMousePos.y;
 
-                    currentMousePos.x = event.pageX;
-                    currentMousePos.y = event.pageY;
+                    currentMousePos.x   = event.pageX;
+                    currentMousePos.y   = event.pageY;
 
-                    isDragging = false;
+                    isDragging          = false;
                     if (mouseIn && mouseDown) {
                         isDragging = true;
                     }
@@ -1036,22 +1042,21 @@ $(document).ready(() => {
                 bindMouseEvents();
 
                 //  Get user specified loop speed
-                var loopSpeed = Utility.getAttrAsNumber(scrollCarouselWrapper, CAROUSEL_AUTO_PLAY_SPEED_ATTR);
+                var loopSpeed = Util.getAttrAsNumber(scrollCarouselWrapper, CAROUSEL_AUTO_PLAY_SPEED_ATTR);
                 loopSpeed = isNaN(loopSpeed) ? 0.5 : loopSpeed;
 
                 //  Position where to reset the carousel's left postion
                 var resetPos = originalElementsCount * $(carouselItems[0]).outerWidth(true);
 
                 //  Starting left position
-                const startPos = Utility.getCSSAsNumber(scrollCarouselInnerWrapper, "left");
+                const startPos = Util.getCSSAsNumber(scrollCarouselInnerWrapper, "left");
 
                 //----------------------------
                 //  Carousel loop
                 //----------------------------
                 var scrollCarouselEventLoop = setInterval(() => {
                     //  Current left position of the inner wrapper
-                    var currentPos = Utility.getCSSAsNumber(scrollCarouselInnerWrapper, "left");
-
+                    var currentPos = Util.getCSSAsNumber(scrollCarouselInnerWrapper, "left");
 
                     if (!isDraggable){
                         if (isAutoPlay) {
@@ -1072,14 +1077,14 @@ $(document).ready(() => {
                     //  Check if it hits the bound, then 
                     //  reset the position. 
                     //----------------------------------
-                    if (Utility.isInRange(Math.abs(currentPos),
+                    if (Util.isInRange(Math.abs(currentPos),
                                           resetPos - LOOP_RESET_THRESHOLD,
                                           resetPos + LOOP_RESET_THRESHOLD)) {
                         currentPos = 0;
                     }
 
                     //  Clamp the left position within the boundary
-                    currentPos = Utility.clamp(currentPos, -resetPos, startPos);
+                    currentPos = Util.clamp(currentPos, -resetPos, startPos);
 
                     //  Apply the left position
                     scrollCarouselInnerWrapper.css("left", currentPos);
