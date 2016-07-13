@@ -650,7 +650,7 @@ $(document).ready(() => {
                             let thisSibling = $(elements[i]).siblings()[num - 1];
                             if (typeof thisSibling !== "undefined") {
                                 isAllInvalid = false;
-                                $(elements[i]).css("height", $(thisSibling).height());
+                                $(elements[i]).css("height", $(thisSibling).outerHeight());
                             }
                         }
                     }
