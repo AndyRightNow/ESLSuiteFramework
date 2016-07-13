@@ -104,6 +104,27 @@ $(document).ready(() => {
         //----------------------------------------------
         clamp: function(value, low, high) {
             return value < low ? low : value > high ? high : value;
+        },
+
+        //----------------------------------------------
+        //  Get numbers from a string. 
+        //  It returns null if nothing is found, or
+        //  an array of numbers if anything is found.
+        //----------------------------------------------
+        getNumbersFromString: function(str){
+            if (typeof str !== "undefined"){
+                var regEx = /\d+/;
+
+                var matched = str.match(regEx);
+
+                if (matched !== null){
+                    for (let i = 0; i < matched.length; i++){
+                        matched[i] = parseFloat(matched[i]);
+                    }
+                }
+
+                return matched;
+            }
         }
     };
 
@@ -626,40 +647,68 @@ $(document).ready(() => {
     //  1. adapt-height = "Sibling-n" means setting the height
     //  of the element to the height of its nth sibling
     //  e.g. "Sibling-1" (n starts from 1)
+    //
+    //  2. adapt-outer-height = "Sibling-n" means setting the height
+    //  of the element to the outer height of its nth sibling
+    //  e.g. "Sibling-1" (n starts from 1)
     //--------------------------------------------------
     (function() {
         //------------------------
         //  Adapt height targets
         //------------------------
-        const SIBLING = "Sibling";
+        const SIBLING                   = "Sibling",
+              ADAPT_OUTER_HEIGHT        = "adapt-outer-height",
+              ADAPT_HEIGHT              = "adapt-height",
+              ATTR_VALUE_REGEX          = /^Sibling-\d+$/;  //  Match the whole string with "Sibling-n"
 
-        var ResponsiveElementHeightInterval = setInterval(() => {
-            let elements = $("[adapt-height]");
-            if (typeof elements === "undefined" ||
-                elements.length === 0) { //  Check if elements with the attribute don't exist
-                clearInterval(ResponsiveElementHeightInterval);
-            }
+        var   adaptHeightElements       = $("[" + ADAPT_HEIGHT + "]"),
+              adaptOuterHeightElements  = $("[" + ADAPT_OUTER_HEIGHT + "]");
 
-            let isAllInvalid = true; //  Flag used to check if there is at least one valid attribute value
-            for (let i = 0; i < elements.length; i++) { //  Use native for loop to make the loop within this scope
-                let thisAttr = $(elements[i]).attr('adapt-height');
-                if (typeof thisAttr !== "undefined") {
-                    if (thisAttr.substr(0, SIBLING.length) === SIBLING) {
-                        let num = parseInt(thisAttr[thisAttr.length - 1]);
-                        if (!isNaN(num)) {
-                            let thisSibling = $(elements[i]).siblings()[num - 1];
-                            if (typeof thisSibling !== "undefined") {
-                                isAllInvalid = false;
-                                $(elements[i]).css("height", $(thisSibling).outerHeight());
-                            }
-                        }
+        //---------------------------------------------
+        //  Function used to perform height adjustment
+        //---------------------------------------------
+        function adjustHeight(elements, isOuter){
+            $.each(elements, (i, val) => {
+                let attrVal = $(val).attr(isOuter ? 
+                                    ADAPT_OUTER_HEIGHT : ADAPT_HEIGHT);
+                let matchRes = attrVal.match(ATTR_VALUE_REGEX);
+                if (matchRes !== null){
+                    attrVal = matchRes[0];
+                    let siblingIndex = Util.getNumbersFromString(attrVal)[0] - 1;
+                    let thisSibling = $(val).siblings()[siblingIndex];
+                    if (typeof thisSibling !== "undefined" &&
+                        thisSibling.length !== 0){
+                        let thisHeight = isOuter ? 
+                            $(thisSibling).outerHeight() : $(thisSibling).height();
+                        $(val).height(thisHeight);
                     }
                 }
+            });
+        }
+
+        //-------------------------------------------------------------------
+        //  Use an interval to adapt height to dynamically resized siblings
+        //------------------------------------------------------------------
+        var adaptHeightInterval = setInterval(() => {
+            let isAllInvalid = true;
+
+            if (typeof adaptHeightElements !== "undefined" &&
+                adaptHeightElements.length !== 0){
+                isAllInvalid = false;
+                adjustHeight(adaptHeightElements, false);
             }
-            if (isAllInvalid) {
-                clearInterval(ResponsiveElementHeightInterval);
+
+            if (typeof adaptOuterHeightElements !== "undefined" &&
+                adaptOuterHeightElements.length !== 0){
+                isAllInvalid = false;
+                adjustHeight(adaptOuterHeightElements, true);
+            }
+
+            if (isAllInvalid){
+                clearInterval(adaptHeightInterval);
             }
         });
+
     })();
 
     //--------------------------------------------------
@@ -728,7 +777,13 @@ $(document).ready(() => {
             UTCHour = date.getUTCHours();
             UTCMin = date.getUTCMinutes();
             UTCSec = date.getUTCSeconds();
-            UTCTimeInMillisec = Date.UTC(UTCYear, UTCMonth, UTCDate, UTCHour, UTCMin, UTCSec);
+            UTCTimeInMillisec = Date.UTC(
+                UTCYear, 
+                UTCMonth, 
+                UTCDate, 
+                UTCHour, 
+                UTCMin, 
+                UTCSec);
         }
 
         //-----------------------------------------------------------------
