@@ -42,9 +42,9 @@ $(document).ready(() => {
     //----------------------------------
     //  Global constants
     //----------------------------------
-    const NONE          =   "none"; //  Display none
-    const OPACITY_0     =   "opacity0";
-    const MOBILE_WIDTH  =   601; //  Mobile screen width
+    const   NONE          =   "none", //  Display none
+            OPACITY_0     =   "opacity0",
+            MOBILE_WIDTH  =   601; //  Mobile screen width
 
     //----------------------------
     //  Utility namespace
@@ -126,22 +126,17 @@ $(document).ready(() => {
     //        2. You can only use one effect class at a time.
     //--------------------------------------------------------------------------------
     (function() {
-        const FADE_FROM_BOTTOM  =   "scrollshow-fadefrombottom";
-        const SCALE_IN          =   "scrollshow-scalein";
-        const SCROLL_SHOW       =   'scrollshow';
-        const TRANSITION_600MS  =   "transition600ms";
-        const TRANSITION_TIME   =   600; //Transition time in millisecond
+        const   FADE_FROM_BOTTOM        = "scrollshow-fadefrombottom",
+                SCALE_IN                = "scrollshow-scalein",
+                SCROLL_SHOW             = 'scrollshow',
+                TRANSITION_600MS        = "transition600ms",
+                TRANSITION_TIME         = 600; //Transition time in millisecond
 
-        //  Flag used to indicate if current element is shown
-        var isCurrentElementShown = false;
-        //  Flag used to indicate if the next element can be fetched
-        var canGetNextElement = true;
-
-        //  Current element to show
-        var currElem;
-
-        //  A queue used to store the actions of removing transitions
-        var removeTransitionQueue = [];
+        
+        var     isCurrentElementShown   = false,//  Flag used to indicate if current element is shown
+                canGetNextElement       = true, //  Flag used to indicate if the next element can be fetched
+                currElem,                       //  Current element to show
+                removeTransitionQueue   = [];   //  A queue used to store the actions of removing transitions
 
         //  Add transitions to all scrollshow elements
         $("." + SCROLL_SHOW).addClass(TRANSITION_600MS);
@@ -276,11 +271,11 @@ $(document).ready(() => {
         //-------------
         //  Constants
         //-------------
-        const SHOW_PROP             =    "translate(-50%, -50%) scale(1)", //  Property used to show the window
-              HIDE_PROP             =    "translate(-50%, -50%) scale(0)", //  Property used to hide the window
-              ANIMATE_TIME          =    400, //  Window animate time
-              NO_OVERFLOW           =    "nooverflow", //  No vertical scrolling
-              POP_CONT_MAX          =    50, //  Max popped out window content
+        const SHOW_PROP             =    "translate(-50%, -50%) scale(1)",  //  Property used to show the window
+              HIDE_PROP             =    "translate(-50%, -50%) scale(0)",  //  Property used to hide the window
+              ANIMATE_TIME          =    400,                               //  Window animate time
+              NO_OVERFLOW           =    "nooverflow",                      //  No vertical scrolling
+              POP_CONT_MAX          =    50,                                //  Max popped out window content
               POP_BUTTON_NO_MOBILE  =    "popbtn-nomobile",
               MOBILE_WINDOW_WIDTH   =    "100vw",
               MOBILE_WINDOW_HEIGHT  =    "80vh",
@@ -488,18 +483,15 @@ $(document).ready(() => {
         //-------------------------
         //  Constants
         //-------------------------
-        const ALL           =   "All",
-              HALF          =   "Half",
-              QUARTER       =   "Quarter",
-              NUM_TO_SHOW   =   "num-to-show",
-              HIDDEN_ITEM   =   "hiddenitem";
+        const   ALL           =   "All",
+                HALF          =   "Half",
+                QUARTER       =   "Quarter",
+                NUM_TO_SHOW   =   "num-to-show",
+                HIDDEN_ITEM   =   "hiddenitem";
 
-        //  Hidden items
-        var hiddenItems =   $("." + HIDDEN_ITEM);
-        //  Button to click to show
-        var showBtn     =   $(".showhiddenitembtn");
-        //  How many element to show on one click
-        var numToShow   =   ALL;
+        var     hiddenItems   =   $("." + HIDDEN_ITEM),
+                showBtn       =   $(".showhiddenitembtn"),  //  Button to click to show
+                numToShow     =   ALL;                      //  How many element to show on one click
 
         //------------------------------------
         //  Get user specified number to show
@@ -572,13 +564,13 @@ $(document).ready(() => {
     //  to the largest element of the items.
     //--------------------------------------------------
     (function() {
-        var items       =   $(".auto-fade-item"),
-            index       =   0, //  Loop index among all items
-            maxHeight   =   0;
+        var     items                 =   $(".auto-fade-item"),
+                index                 =   0,    //  Loop index among all items
+                maxHeight             =   0;
 
-        const INTERVAL_TIME         =   7000, //Time period for setInterval
-              TRANSITION_TIME       =   400, //Time period of css transition
-              AUTO_ADJUST_HEIGHT    =   "auto-adjust-height";
+        const   INTERVAL_TIME         =   7000, //Time period for setInterval
+                TRANSITION_TIME       =   400,  //Time period of css transition
+                AUTO_ADJUST_HEIGHT    =   "auto-adjust-height";
 
         if (items.length > 0) {
             //--------------------------------------------------------
@@ -694,34 +686,34 @@ $(document).ready(() => {
         //-------------------------------------------
         //  Count down display class names constants
         //-------------------------------------------
-        const COUNT_DOWN_YEAR          =    "count-down-year",
-              COUNT_DOWN_MONTH         =    "count-down-month",
-              COUNT_DOWN_DAY           =    "count-down-day",
-              COUNT_DOWN_HOUR          =    "count-down-hour",
-              COUNT_DOWN_MINUTE        =    "count-down-minute",
-              COUNT_DOWN_SECOND        =    "count-down-second",
-              COUNT_DOWN_YEAR_CLASS    =    ".count-down-year",
-              COUNT_DOWN_MONTH_CLASS   =    ".count-down-month",
-              COUNT_DOWN_DAY_CLASS     =    ".count-down-day",
-              COUNT_DOWN_HOUR_CLASS    =    ".count-down-hour",
-              COUNT_DOWN_MINUTE_CLASS  =    ".count-down-minute",
-              COUNT_DOWN_SECOND_CLASS  =    ".count-down-second",
+        const   COUNT_DOWN_YEAR          =    "count-down-year",
+                COUNT_DOWN_MONTH         =    "count-down-month",
+                COUNT_DOWN_DAY           =    "count-down-day",
+                COUNT_DOWN_HOUR          =    "count-down-hour",
+                COUNT_DOWN_MINUTE        =    "count-down-minute",
+                COUNT_DOWN_SECOND        =    "count-down-second",
+                COUNT_DOWN_YEAR_CLASS    =    ".count-down-year",
+                COUNT_DOWN_MONTH_CLASS   =    ".count-down-month",
+                COUNT_DOWN_DAY_CLASS     =    ".count-down-day",
+                COUNT_DOWN_HOUR_CLASS    =    ".count-down-hour",
+                COUNT_DOWN_MINUTE_CLASS  =    ".count-down-minute",
+                COUNT_DOWN_SECOND_CLASS  =    ".count-down-second",
 
-              COUNT_DOWN_STATE_ATTR    =    "count-down-state",
-              COUNT_DOWN_START_ATTR    =    "count-down-start",
-              COUNT_DOWN_END_ATTR      =    "count-down-end",
-              TIME_ZONE_ATTR           =    "time-zone",
+                COUNT_DOWN_STATE_ATTR    =    "count-down-state",
+                COUNT_DOWN_START_ATTR    =    "count-down-start",
+                COUNT_DOWN_END_ATTR      =    "count-down-end",
+                TIME_ZONE_ATTR           =    "time-zone",
 
-              COUNT_DOWN_WRAPPER_CLASS =    ".count-down";
+                COUNT_DOWN_WRAPPER_CLASS =    ".count-down";
 
         //---------------------------------
         //  Conversion constants
         //---------------------------------
-        const   YEAR_SEC          =   31536000,
-                MONTH_SEC         =   2592000,
-                DAY_SEC           =   86400,
-                HOUR_SEC          =   3600,
-                MIN_SEC           =   60;
+        const   YEAR_SEC                 =   31536000,
+                MONTH_SEC                =   2592000,
+                DAY_SEC                  =   86400,
+                HOUR_SEC                 =   3600,
+                MIN_SEC                  =   60;
 
         //---------------------------------------------------------------------------
         //  UTC date variables and a helper function used to get current UTC date
@@ -896,18 +888,14 @@ $(document).ready(() => {
         //-------------------------
         //  Names constants
         //-------------------------
-        const SCROLL_CAROUSEL_WRAPPER_CALSS         = ".scroll-carousel",
-              SCROLL_CAROUSEL_INNER_WRAPPER_CALSS   = ".scroll-carousel-inner",
-              SCROLL_CAROUSEL_ITEM_CALSS            = ".scroll-carousel-item",
-              CAROUSEL_AUTO_PLAY_ATTR               = "carousel-auto-play",
-              CAROUSEL_AUTO_PLAY_SPEED_ATTR         = "carousel-auto-play-speed",
-              CAROUSEL_DRAGGABLE_ATTR               = "carousel-draggable",
-
-        //  Drag factor used to make dragging action identical to the movement caused by dragging
-              DRAG_FACTOR                           = 0.5,
-
-        //  Threshold value for auto play loop to match the reset position
-              LOOP_RESET_THRESHOLD                  = 1;
+        const SCROLL_CAROUSEL_WRAPPER_CALSS       = ".scroll-carousel",
+              SCROLL_CAROUSEL_INNER_WRAPPER_CALSS = ".scroll-carousel-inner",
+              SCROLL_CAROUSEL_ITEM_CALSS          = ".scroll-carousel-item",
+              CAROUSEL_AUTO_PLAY_ATTR             = "carousel-auto-play",
+              CAROUSEL_AUTO_PLAY_SPEED_ATTR       = "carousel-auto-play-speed",
+              CAROUSEL_DRAGGABLE_ATTR             = "carousel-draggable",
+              DRAG_FACTOR                         = 0.5,    //  Drag factor used to make dragging action identical to the movement caused by dragging
+              LOOP_RESET_THRESHOLD                = 1;      //  Threshold value for auto play loop to match the reset position
 
         //--------------------------------------------
         //  Function scoped variables declarations
@@ -915,44 +903,49 @@ $(document).ready(() => {
         var scrollCarouselInnerWrapper,
             scrollCarouselWrapper,
             carouselItems,
-        //  Flag to record if the mouse events are bound
-            isEventBound                                        = false,
+
         //  Flags to record mouse states
-            mouseUp, mouseDown, mouseIn, mouseOut, mouseMove,
+            mouseUp, 
+            mouseDown, 
+            mouseIn, 
+            mouseOut, 
+            mouseMove,
+
         //  Mouse positions
-            lastMousePos                                        = new Position(0, 0),
-            currentMousePos                                     = new Position(0, 0),
-            draggingMousePos                                    = new Position(0, 0),
-        //  Flag to check if mouse is dragging
-            isDragging                                          = false,
-        //  Flag to indicate if the carousel is draggable
-            isDraggable                                         = false;
+            lastMousePos                          = new Position(0, 0),
+            currentMousePos                       = new Position(0, 0),
+            draggingMousePos                      = new Position(0, 0),
+
+            isDragging                            = false,  //  Flag to check if mouse is dragging
+            isDraggable                           = false;  //  Flag to indicate if the carousel is draggable
 
         //-------------------------------------------
         //  Bind event listener to the carousel items
         //-------------------------------------------
         function bindMouseEvents() {
-            if (!isEventBound) {
-                let objectsToBind = carouselItems;
-                if (typeof objectsToBind !== "undefined" ||
-                    objectsToBind.length !== 0) {
-                    objectsToBind.find('*').css("pointer-events", NONE);
-                    objectsToBind.mouseenter(() => { 
-                        mouseIn = true;
-                        mouseDown = false; });
-                    objectsToBind.mouseout(() => { 
-                        mouseIn = false;
-                        mouseDown = false; });
-                    objectsToBind.mousedown(() => {
-                        mouseDown = true;
-                        mouseUp = false;
-                    });
-                    objectsToBind.mouseup(() => {
-                        mouseUp = true;
-                        mouseDown = false;
-                    });
-                    isEventBound = true;
-                }
+            var objectsToBind = carouselItems;
+            if (typeof objectsToBind !== "undefined" ||
+                objectsToBind.length !== 0) {
+                //  Disable pointer events
+                objectsToBind.find('*').css("pointer-events", NONE);
+
+                objectsToBind.mouseenter(() => { 
+                    mouseIn = true;
+                    mouseDown = false; });
+
+                objectsToBind.mouseout(() => { 
+                    mouseIn = false;
+                    mouseDown = false; });
+
+                objectsToBind.mousedown(() => {
+                    mouseDown = true;
+                    mouseUp = false;
+                });
+
+                objectsToBind.mouseup(() => {
+                    mouseUp = true;
+                    mouseDown = false;
+                });
             }
         }
 
@@ -990,7 +983,8 @@ $(document).ready(() => {
                 //---------------------------------------
                 let isAutoPlay = scrollCarouselWrapper.attr(CAROUSEL_AUTO_PLAY_ATTR);
                 isAutoPlay = typeof isAutoPlay === "undefined" || isAutoPlay == "Off" ?
-                    false : isAutoPlay === "On" ? true : false;
+                    false : isAutoPlay === "On" ? 
+                    true : false;
 
                 //------------------------------------------------------------------------------------
                 //  Copy the first maxElementsToShow elements to append to the end of the wrapper
@@ -1034,6 +1028,7 @@ $(document).ready(() => {
                     currentMousePos.y   = event.pageY;
 
                     isDragging          = false;
+
                     if (mouseIn && mouseDown) {
                         isDragging = true;
                     }
