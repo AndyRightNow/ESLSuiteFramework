@@ -877,10 +877,10 @@ $(document).ready(() => {
                 //  based on the attribute to it.
                 //------------------------------------------
                 let countDownState = countDownWrapper.attr(COUNT_DOWN_STATE_ATTR);
-                countDownState = typeof countDownState === "undefined" ||
-                    (countDownState != "On" &&
-                        countDownState != "Off") ?
-                    "On" : countDownState === "On" ? true : false;
+                countDownState = 
+                typeof countDownState === "undefined" ||
+                    (countDownState !== "On" && countDownState !== "Off") ?
+                    false : countDownState === "On" ? true : false;
 
                 getCurrentUTCTime();
                 if (UTCTimeInMillisec < countDownStart ||
@@ -949,8 +949,8 @@ $(document).ready(() => {
         //  Position object
         //----------------------
         var Position = function(x, y) {
-            this.x = x;
-            this.y = y;
+            this.x = x || 0;
+            this.y = y || 0;
         };
 
         //-------------------------
@@ -980,9 +980,9 @@ $(document).ready(() => {
             mouseMove,
 
         //  Mouse positions
-            lastMousePos                          = new Position(0, 0),
-            currentMousePos                       = new Position(0, 0),
-            draggingMousePos                      = new Position(0, 0),
+            lastMousePos                          = new Position(),
+            currentMousePos                       = new Position(),
+            draggingMousePos                      = new Position(),
 
             isDragging                            = false,  //  Flag to check if mouse is dragging
             isDraggable                           = false;  //  Flag to indicate if the carousel is draggable
@@ -992,7 +992,7 @@ $(document).ready(() => {
         //-------------------------------------------
         function bindMouseEvents() {
             var objectsToBind = carouselItems;
-            if (typeof objectsToBind !== "undefined" ||
+            if (typeof objectsToBind !== "undefined" &&
                 objectsToBind.length !== 0) {
                 //  Disable pointer events
                 objectsToBind.find('*').css("pointer-events", NONE);
