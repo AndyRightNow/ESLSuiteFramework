@@ -381,7 +381,7 @@ $(document).ready(() => {
                             //  Adjust the size of the pop over window on mobile
                             //---------------------------------------------------
                             if (Util.isMobile()) {
-                                wnd.css("width", MOBILE_WINDOW_WIDTH).css("height", MOBILE_WINDOW_HEIGHT);
+                                wnd.css("width", MOBILE_WINDOW_WIDTH);
                             }
 
                             //------------------------------------------------------------
@@ -1035,7 +1035,7 @@ $(document).ready(() => {
             if (typeof carouselItems !== "undefined" &&
                 carouselItems.length !== 0) {
                 //  Get max elements that the wrapper can show
-                let maxElementsToShow = parseInt(scrollCarouselWrapper.width() / carouselItems.width());
+                let maxElementsToShow = Math.ceil(scrollCarouselWrapper.width() / carouselItems.width());
 
                 //------------------------------------
                 //  Create a inner wrapper for items
