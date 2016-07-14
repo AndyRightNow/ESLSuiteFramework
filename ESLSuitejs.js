@@ -14,6 +14,8 @@
 //  Used to be called in user's code to interact with
 //  the code inside the anonymous function scope
 //----------------------------------------------------
+
+
 var ESLSuiteAPI = {
     //-------------------------------------
     //  APIs of Pop-out window widget
@@ -34,7 +36,7 @@ var ESLSuiteAPI = {
         rebindElements: function() {
             ESLSuiteAPI.PopOutWindow._changeRebindState(true);
         }
-    },
+    }
 };
 
 $(document).ready(() => {
@@ -666,15 +668,24 @@ $(document).ready(() => {
 
         //---------------------------------------------
         //  Function used to perform height adjustment
+        //  @param elements: HTML elements with "adapt-height" or 
+        //                   "adapt-outer-height" attribute.
+        //  @param isOuter:  Check if the current elements to process has
+        //                   "adapt-outer-height" or "adapt-height"
         //---------------------------------------------
         function adjustHeight(elements, isOuter){
             $.each(elements, (i, val) => {
+                //  Fetch the attribute value depending on isOuter
                 let attrVal = $(val).attr(isOuter ? 
                                     ADAPT_OUTER_HEIGHT : ADAPT_HEIGHT);
+                //  Check if the attribute value is an exact match of the pattern
                 let matchRes = attrVal.match(ATTR_VALUE_REGEX);
+
                 if (matchRes !== null){
                     attrVal = matchRes[0];
+                    //  Get the number given by users and subtract 1 from it to make it an index
                     let siblingIndex = Util.getNumbersFromString(attrVal)[0] - 1;
+
                     let thisSibling = $(val).siblings()[siblingIndex];
                     if (typeof thisSibling !== "undefined" &&
                         thisSibling.length !== 0){
@@ -690,6 +701,8 @@ $(document).ready(() => {
         //  Use an interval to adapt height to dynamically resized siblings
         //------------------------------------------------------------------
         var adaptHeightInterval = setInterval(() => {
+            //  Flag to check if there is no either "adapt-height" or "adapt-outer-height"
+            //  is specified
             let isAllInvalid = true;
 
             if (typeof adaptHeightElements !== "undefined" &&
@@ -769,7 +782,7 @@ $(document).ready(() => {
         //---------------------------------------------------------------------------
         var date, UTCYear, UTCMonth, UTCDate, UTCHour, UTCMin, UTCSec, UTCTimeInMillisec;
 
-        function getThisUTCTime() {
+        function getCurrentUTCTime() {
             date = new Date();
             UTCYear = date.getUTCFullYear();
             UTCMonth = date.getUTCMonth();
@@ -790,7 +803,7 @@ $(document).ready(() => {
         //  Helper function to convert seconds to different parts of time
         //  Return: an object with 6 members: year, month, day, hour, min, sec 
         //-----------------------------------------------------------------
-        function extractTime(time) {
+        function formatTimeFromSeconds(time) {
             var y = parseInt(time / YEAR_SEC);
             time -= (y * YEAR_SEC);
 
@@ -869,7 +882,7 @@ $(document).ready(() => {
                         countDownState != "Off") ?
                     "On" : countDownState === "On" ? true : false;
 
-                getThisUTCTime();
+                getCurrentUTCTime();
                 if (UTCTimeInMillisec < countDownStart ||
                     UTCTimeInMillisec > countDownEnd) {
                     countDownState = false;
@@ -883,13 +896,13 @@ $(document).ready(() => {
                 if (countDownState) {
                     var CountDownTimerInterval = setInterval(() => {
                         //  Side effect function to update current stored UTC time
-                        getThisUTCTime();
+                        getCurrentUTCTime();
 
                         //  Time period between current time and end time in seconds
                         var timeDifPeroidInSec = (countDownEnd - UTCTimeInMillisec) / 1000;
 
                         //  Extract years, months, days, minutes and seconds from the seconds period
-                        var extractedTime = extractTime(timeDifPeroidInSec);
+                        var extractedTime = formatTimeFromSeconds(timeDifPeroidInSec);
 
                         //--------------------------------------
                         //  Show the time
