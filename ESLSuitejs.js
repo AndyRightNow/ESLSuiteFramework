@@ -913,7 +913,7 @@ $(document).ready(() => {
                         $(COUNT_DOWN_HOUR_CLASS).text(extractedTime.hour);
                         $(COUNT_DOWN_MINUTE_CLASS).text(extractedTime.minute);
                         $(COUNT_DOWN_SECOND_CLASS).text(extractedTime.second);
-                    });
+                    }, 999);
                 }
             }
         }
