@@ -8,14 +8,15 @@
 //
 //---------------------------------------------------------
 
+//  ESLSuite namespace
+var ESLSuite = {};
+
 //---------------------------------------------------
 //  Public APIs
 //
 //  Used to be called in user's code to interact with
 //  the code inside the anonymous function scope
 //----------------------------------------------------
-
-
 var ESLSuiteAPI = {
     //-------------------------------------
     //  APIs of Pop-out window widget
@@ -110,8 +111,9 @@ $(document).ready(() => {
 
         //----------------------------------------------
         //  Get numbers from a string. 
-        //  It returns null if nothing is found, or
-        //  an array of numbers if anything is found.
+        //
+        //  Return: null if nothing is found, or an array of
+        //          numbers if anything is found.
         //----------------------------------------------
         getNumbersFromString: function(str){
             if (typeof str !== "undefined"){
@@ -127,6 +129,23 @@ $(document).ready(() => {
 
                 return matched;
             }
+        },
+
+        //----------------------------------------
+        //  Get the properties count of an object
+        //
+        //  Note: It doesn't count all properties on
+        //        its prototype chain for the sake of 
+        //        efficiency.
+        //
+        //  Return: Count of the properties
+        //----------------------------------------
+        getPropertyCount: function(obj){
+            var cnt = 0;
+            for (let prop in  obj){
+                cnt++;
+            }
+            return cnt;
         }
     };
 
@@ -1154,6 +1173,121 @@ $(document).ready(() => {
                 });
             }
         }
+    })();
+
+    //-------------------------------------------------------------------------
+    //  Multi-key query container data structure
+    //
+    //  A container data structure supporting multi-key query.
+    //
+    //  The keys of the container are set on construction and can be changed 
+    //  afterwards for the sake of efficiency. 
+    //
+    //  1. The underlying hash tables are constructed based on the keys. 
+    //  2. All the queries, insertions and deletions will need worst case O(n) 
+    //     time to finish. 
+    //  
+    //
+    //-------------------------------------------------------------------------
+    (function(){
+        //  Get the namespace reference
+        var ESLSuite = ESLSuite || {};
+
+        //--------------------------------------------------------
+        //  * Constructors
+        //  * 1 overloaded constructors:
+        //      * Constructor(keys)
+        //        @param keyCount: The count of keys used to query the data
+        //
+        //---------------------------------------------------------
+        ESLSuite.MultikeyQueryContainer = function(...args) {
+            //------------------------------------
+            //  Initialize all member variables
+            //------------------------------------
+            this._keyCount = 0;
+            this._data = {};
+            this._size = 0;
+
+            //---------------------------------------------------------
+            //  Switch to use different overloaded constructors
+            //---------------------------------------------------------
+            switch (args.length){
+                case 0:{
+                    var msg = "MultiKeyQueryContainer constructor must have arguments!";
+                    throw new Error(msg);
+                }
+                case 1:{
+                    if (typeof args[0] === "number"){
+                        //------------------------
+                        //  Constructor(keyCount)
+                        //------------------------
+                        this._keyCount = args[0];
+                    }
+                    break;
+                }
+            }
+        };
+
+        //-----------------------------------
+        //  Private helper member functions
+        //-----------------------------------
+
+        //------------------------------------------------------------------------------
+        //  Find table(s) helper function
+        //
+        //  Find The table(s) that match a key
+        //
+        //  Return: An array containing tables that match a key
+        //
+        //  @param key: The key to match in the table(s)
+        //  @param tables: An array containing table(s)
+        //------------------------------------------------------------------------------
+        ESLSuite.MultikeyQueryContainer.prototype.__findTablesHelper = function(key, tables){
+            
+        };
+
+        //------------------------------------------------------------------------------
+        //  Find table(s)
+        //
+        //  Return: An array containing tables that match the keys
+        //
+        //  @param keys: An array containing the exact number of keys that the
+        //               user specifies when constructing the container. A key
+        //               should be a string and if "All elements" is intended, the 
+        //               key should be an empty string.
+        //
+        //------------------------------------------------------------------------------
+        ESLSuite.MultikeyQueryContainer.prototype._findTables = function(keys){
+            if (!Array.isArray(keys)){
+                throw new Error("The parameter is not an array!");
+            }
+            else{
+                if (keys.length !== this._keyCount){
+                    throw new Error("The passed in keys'length does not match the key count of the container!");
+                }
+                else{
+
+                }
+            }
+        };
+
+        //-----------------------------------------------
+        //  Insert element into the container
+        //
+        //  Return: no.
+        //
+        //  @param keys: An array containing the exact number of keys that the
+        //               user specifies when constructing the container. A key
+        //               should be a string and if "All elements" is intended, the 
+        //               key should be an empty string.
+        //  @param element: The element you want to insert into the container.
+        //
+        //-----------------------------------------------
+        ESLSuite.MultikeyQueryContainer.prototype.insert = function(keys, element){
+
+        };
+
+
     })();
 });
 
