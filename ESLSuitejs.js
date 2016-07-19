@@ -1239,7 +1239,7 @@ $(document).ready(() => {
         //-----------------------------------------------
         //  Insert element into the container
         //
-        //  Return: no
+        //  Return: A bool to indicate if the insertion is successful
         //
         //  @param keys: An array containing the exact number of keys that the
         //               user specifies when constructing the container. A key
@@ -1249,14 +1249,44 @@ $(document).ready(() => {
         //
         //-----------------------------------------------
         ESLSuite.MultikeyQueryContainer.prototype.insert = function(keys, element){
-            
+            var tables = this._findTables(keys);
+
+            if (typeof tables === "undefined"){
+                return false;
+            }
+
+            if (Array.isArray(tables)){ //  Found
+                for (let i = 0; i < tables.length; i++){
+                    tables[i].Data.push(element);
+                }
+            }
+            else{   //  Not found
+                let index = tables.Index;
+                tables = tables.Result;
+
+                for (let i = 0; i < tables.length; i++){
+                    tables[i][keys[index]] = {};
+
+                    let subTable = tables[i][keys[index]];
+                    for (let j = index + 1; j < this._keyCount; j++){
+                        subTable[keys[j]] = {};
+                        subTable = subTable[keys[j]];
+                    }
+
+                    subTable.Data = [element];
+                }
+            }
+
+            return true;
         };
 
         //------------------------------------------------------------------------------
         //  Find table(s)
         //
         //  Return: 1. undefined if the parameters are invalid
-        //          2. The input tables if not found
+        //          2. If not found, an object containing:
+        //              1) Result: The table containing the level of sub-tables where the key is not found
+        //              2) Index: The index of the key that's not found (Range from 0 to keyCount - 1)
         //          3. An array containing found tables if found
         //
         //  @param keys: An array containing the exact number of keys that the
@@ -1275,14 +1305,25 @@ $(document).ready(() => {
                 }
                 else{
                     var tables = [this._data];
-
+                    var res;
                     for (let i = 0; i < keys.length; i++){
-                        tables = this.__findTablesHelper(keys[i], tables);
-                        
-                        if (typeof tables === "undefined" || 
-                            !Array.isArray(tables)){
-                            break;
+                        res = this.__findTablesHelper(keys[i], tables);
+
+                        if (typeof res === "undefined"){
+                            return undefined;
                         }
+                        else{
+                            if (!Array.isArray(res)){
+                                res = {
+                                    Result: tables,
+                                    Index: i
+                                };
+                                
+                                return res;
+                            }
+                        }
+
+                        tables = res;
                     }
 
                     return tables;
@@ -1296,7 +1337,7 @@ $(document).ready(() => {
         //  Find the sub-table(s) that match a key in an array of tables
         //
         //  Return: 1. undefined if the parameters are invalid
-        //          2. The input tables if not found
+        //          2. False if not found
         //          3. An array containing found tables if found
         //
         //  @param key: The key to match in the table(s). Empty string means "All".
@@ -1329,7 +1370,7 @@ $(document).ready(() => {
             }
 
             if (notFound){
-                return tables;
+                return false;
             }
 
             return ret;
