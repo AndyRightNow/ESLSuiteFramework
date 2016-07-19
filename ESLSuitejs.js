@@ -1188,12 +1188,10 @@ $(document).ready(() => {
     //
     //  A container data structure supporting multi-key query.
     //
-    //  The keys of the container are set on construction and can be changed 
+    //  The keys of the container are set on construction and CAN NOT be changed 
     //  afterwards for the sake of efficiency. 
     //
-    //  1. The underlying hash tables are constructed based on the keys. 
-    //  2. All the queries, insertions and deletions will need worst case O(n) 
-    //     time to finish. 
+    //  1. The underlying hash tables are constructed based on the keys.
     //  
     //
     //-------------------------------------------------------------------------
@@ -1238,38 +1236,28 @@ $(document).ready(() => {
         //  Private helper member functions
         //-----------------------------------
 
-        //------------------------------------------------------------------------------
-        //  Find table(s) helper function
+        //-----------------------------------------------
+        //  Insert element into the container
         //
-        //  Find The table(s) that match a key
+        //  Return: no
         //
-        //  Return: An array containing tables that match a key
+        //  @param keys: An array containing the exact number of keys that the
+        //               user specifies when constructing the container. A key
+        //               should be a string and if "All elements" is intended, the 
+        //               key should be an empty string.
+        //  @param element: The element you want to insert into the container.
         //
-        //  @param key: The key to match in the table(s)
-        //  @param tables: An array containing table(s)
-        //------------------------------------------------------------------------------
-        ESLSuite.MultikeyQueryContainer.prototype.__findTablesHelper = function(key, tables){
-            var ret = [];
-
-            if (typeof key !== "string" ||
-                !Array.isArray(tables) ||
-                key === ""){
-                return ret;
-            }
-
-            for (let i = 0; i < tables.length; i++){
-                if (tables[i].hasOwnProperty(key)){
-                    ret.push(tables[i][key]);
-                }
-            }
-
-            return ret;
+        //-----------------------------------------------
+        ESLSuite.MultikeyQueryContainer.prototype.insert = function(keys, element){
+            
         };
 
         //------------------------------------------------------------------------------
         //  Find table(s)
         //
-        //  Return: An array containing tables that match the keys
+        //  Return: 1. undefined if the parameters are invalid
+        //          2. The input tables if not found
+        //          3. An array containing found tables if found
         //
         //  @param keys: An array containing the exact number of keys that the
         //               user specifies when constructing the container. A key
@@ -1286,27 +1274,80 @@ $(document).ready(() => {
                     throw new Error("The passed in keys'length does not match the key count of the container!");
                 }
                 else{
+                    var tables = [this._data];
 
+                    for (let i = 0; i < keys.length; i++){
+                        tables = this.__findTablesHelper(keys[i], tables);
+                        
+                        if (typeof tables === "undefined" || 
+                            !Array.isArray(tables)){
+                            break;
+                        }
+                    }
+
+                    return tables;
                 }
             }
         };
 
-        //-----------------------------------------------
-        //  Insert element into the container
+        //------------------------------------------------------------------------------
+        //  Find table(s) helper function
         //
-        //  Return: no.
+        //  Find the sub-table(s) that match a key in an array of tables
         //
-        //  @param keys: An array containing the exact number of keys that the
-        //               user specifies when constructing the container. A key
-        //               should be a string and if "All elements" is intended, the 
-        //               key should be an empty string.
-        //  @param element: The element you want to insert into the container.
+        //  Return: 1. undefined if the parameters are invalid
+        //          2. The input tables if not found
+        //          3. An array containing found tables if found
         //
-        //-----------------------------------------------
-        ESLSuite.MultikeyQueryContainer.prototype.insert = function(keys, element){
+        //  @param key: The key to match in the table(s). Empty string means "All".
+        //  @param tables: An array containing table(s)
+        //------------------------------------------------------------------------------
+        ESLSuite.MultikeyQueryContainer.prototype.__findTablesHelper = function(key, tables){
+            //------------------------------
+            //  If the parameters are invalid,
+            //  return undefined.
+            //------------------------------
+            if (typeof key !== "string" ||
+                !Array.isArray(tables)){
+                return undefined;
+            }
 
+            var ret = [];   //  Array
+            var notFound = true; // Flag to check if not found
+
+            for (let i = 0; i < tables.length; i++){
+                if (key === ""){
+                    for (let t in tables[i]){
+                        notFound = false;
+                        ret.push(tables[i][t]);
+                    }
+                }
+                else if (tables[i].hasOwnProperty(key)){
+                    notFound = false;
+                    ret.push(tables[i][key]);
+                }
+            }
+
+            if (notFound){
+                return tables;
+            }
+
+            return ret;
         };
 
+        //------------------------------------------------------------------------------
+        //  Get data in an array of tables
+        //
+        //  Take the data out of all tables inside the array. In other words, unroll all
+        //  objects and take the values out of all properties.
+        //
+        //  Return: An array containing data
+        //
+        //  @param tables: An array containing table(s)
+        //------------------------------------------------------------------------------
+        ESLSuite.MultikeyQueryContainer.prototype._getDataInTables = function(tables){
+
+        };
 
     })();
 });
