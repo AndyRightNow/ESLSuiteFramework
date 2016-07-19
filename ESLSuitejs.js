@@ -6,8 +6,15 @@
 //  The framework encapsulate animation effects and widgets, 
 //  all of which are in a certain CSS style.
 //
+//
+// **************************************************************
+// **  All APIs under namespace ESLSuite should be used inside **
+// **  a "$(document).ready()" function or it's not going to   **
+// **  work properly.                                          **
+// **************************************************************
 //---------------------------------------------------------
 
+    
 //  ESLSuite namespace
 var ESLSuite = {};
 
@@ -42,6 +49,7 @@ var ESLSuiteAPI = {
 
 $(document).ready(() => {
     "use strict";
+
     //----------------------------------
     //  Global constants
     //----------------------------------
@@ -1190,8 +1198,6 @@ $(document).ready(() => {
     //
     //-------------------------------------------------------------------------
     (function(){
-        //  Get the namespace reference
-        var ESLSuite = ESLSuite || {};
 
         //--------------------------------------------------------
         //  * Constructors
@@ -1200,7 +1206,7 @@ $(document).ready(() => {
         //        @param keyCount: The count of keys used to query the data
         //
         //---------------------------------------------------------
-        ESLSuite.MultikeyQueryContainer = function(...args) {
+        ESLSuite.MultikeyQueryContainer = function() {
             //------------------------------------
             //  Initialize all member variables
             //------------------------------------
@@ -1211,17 +1217,17 @@ $(document).ready(() => {
             //---------------------------------------------------------
             //  Switch to use different overloaded constructors
             //---------------------------------------------------------
-            switch (args.length){
+            switch (arguments.length){
                 case 0:{
                     var msg = "MultiKeyQueryContainer constructor must have arguments!";
                     throw new Error(msg);
                 }
                 case 1:{
-                    if (typeof args[0] === "number"){
+                    if (typeof arguments[0] === "number"){
                         //------------------------
                         //  Constructor(keyCount)
                         //------------------------
-                        this._keyCount = args[0];
+                        this._keyCount = arguments[0];
                     }
                     break;
                 }
@@ -1243,7 +1249,21 @@ $(document).ready(() => {
         //  @param tables: An array containing table(s)
         //------------------------------------------------------------------------------
         ESLSuite.MultikeyQueryContainer.prototype.__findTablesHelper = function(key, tables){
-            
+            var ret = [];
+
+            if (typeof key !== "string" ||
+                !Array.isArray(tables) ||
+                key === ""){
+                return ret;
+            }
+
+            for (let i = 0; i < tables.length; i++){
+                if (tables[i].hasOwnProperty(key)){
+                    ret.push(tables[i][key]);
+                }
+            }
+
+            return ret;
         };
 
         //------------------------------------------------------------------------------
