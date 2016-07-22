@@ -1222,6 +1222,9 @@ $(document).ready(() => {
     //                          
     //  * All tables are javascript objects(i.e. {}) in order to support direct access
     //    with keys as well as being passed by reference among member functions.
+    //  * Supported operations so far:
+    //      * Insert an elements with keys
+    //      * Get an element with keys
     //-------------------------------------------------------------------------
     (function(){
 
