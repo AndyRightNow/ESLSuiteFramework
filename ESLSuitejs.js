@@ -1,20 +1,20 @@
 /* jshint esversion: 6 */
 
-//---------------------------------------------------------
-//                  ESL Suite Framework JS
+//////////////////////////////////////////////////////////////////////
+//                        ESL Suite Framework JS
+//      
+//        The framework encapsulate animation effects and widgets, 
+//        all of which are in a certain CSS style.
 //
-//  The framework encapsulate animation effects and widgets, 
-//  all of which are in a certain CSS style.
 //
-//
-// **************************************************************
-// **  All APIs under namespace ESLSuite should be used inside **
-// **  a "$(document).ready()" function or it's not going to   **
-// **  work properly.                                          **
-// **************************************************************
-//---------------------------------------------------------
+//////////////////////////////////////////////////////////////////////
+/////                                                              ///
+/////    All APIs under namespace ESLSuite should be used inside   ///
+/////    a "$(document).ready()" function or it's not going to     ///
+/////    work properly.                                            ///
+/////                                                              ///
+//////////////////////////////////////////////////////////////////////
 
-    
 //  ESLSuite namespace
 var ESLSuite = {};
 
@@ -1191,9 +1191,37 @@ $(document).ready(() => {
     //  The keys of the container are set on construction and CAN NOT be changed 
     //  afterwards for the sake of efficiency. 
     //
-    //  1. The underlying hash tables are constructed based on the keys.
-    //  
+    //  * The underlying hash tables are constructed based on the keys.
+    //  * The structure of the tables:
+    //          
+    //     _data
+    //         First level of keys
+    //              ...
+    //                 The last level of keys
+    //                     Data: [..., ...., ...](An array containing data)
     //
+    //
+    //     E.g.
+    //           _data = 
+    //           {
+    //               First_level_1:
+    //               {
+    //                   The_last_level_1:
+    //                   {
+    //                       Data: [1, 2, 3, 4]
+    //                   }
+    //               },
+    //               First_level_2:
+    //               {
+    //                   The_last_level_2:
+    //                   {
+    //                       Data: [1, 2, 3, 4]
+    //                   }
+    //                }
+    //           }
+    //                          
+    //  * All tables are javascript objects(i.e. {}) in order to support direct access
+    //    with keys as well as being passed by reference among member functions.
     //-------------------------------------------------------------------------
     (function(){
 
@@ -1230,13 +1258,23 @@ $(document).ready(() => {
                     break;
                 }
             }
+        };        
+        //---------------------------------------------------------------------------------
+        //  Get element from the container
+        //
+        //  Return: An array of elements that match the keys
+        //
+        //  @param keys: An array containing the exact number of keys that the
+        //               user specifies when constructing the container. A key
+        //               should be a string and if "All elements" is intended, the 
+        //               key should be an empty string.
+        //
+        //---------------------------------------------------------------------------------
+        ESLSuite.MultikeyQueryContainer.prototype.get = function(keys){
+            return this._getDataInTables(this._findTables(keys));
         };
 
-        //-----------------------------------
-        //  Private helper member functions
-        //-----------------------------------
-
-        //-----------------------------------------------
+        //---------------------------------------------------------------------------------
         //  Insert element into the container
         //
         //  Return: A bool to indicate if the insertion is successful
@@ -1247,7 +1285,7 @@ $(document).ready(() => {
         //               key should be an empty string.
         //  @param element: The element you want to insert into the container.
         //
-        //-----------------------------------------------
+        //---------------------------------------------------------------------------------
         ESLSuite.MultikeyQueryContainer.prototype.insert = function(keys, element){
             var tables = this._findTables(keys);
 
@@ -1255,24 +1293,33 @@ $(document).ready(() => {
                 return false;
             }
 
-            if (Array.isArray(tables)){ //  Found
+            //  Found
+            if (Array.isArray(tables)){ 
                 for (let i = 0; i < tables.length; i++){
                     tables[i].Data.push(element);
                 }
             }
-            else{   //  Not found
-                let index = tables.Index;
-                tables = tables.Result;
+            //  Not found
+            else{   
+                //  Get the index of the key absent
+                let index = tables.Index;   
+                //  Get the previous level of tables of the level in which the key is not found
+                tables = tables.Result;     
 
                 for (let i = 0; i < tables.length; i++){
-                    tables[i][keys[index]] = {};
+                    //  Create an empty table with the name absent
+                    tables[i][keys[index]] = {}; 
 
+                    //--------------------------------------------------
+                    //  Create tables for all following levels of keys
+                    //--------------------------------------------------
                     let subTable = tables[i][keys[index]];
                     for (let j = index + 1; j < this._keyCount; j++){
                         subTable[keys[j]] = {};
                         subTable = subTable[keys[j]];
                     }
 
+                    //  Create a Data member in the last level of tables
                     subTable.Data = [element];
                 }
             }
@@ -1280,6 +1327,9 @@ $(document).ready(() => {
             return true;
         };
 
+        //-----------------------------------
+        //  Private helper member functions
+        //-----------------------------------
         //------------------------------------------------------------------------------
         //  Find table(s)
         //
@@ -1287,7 +1337,7 @@ $(document).ready(() => {
         //          2. If not found, an object containing:
         //              1) Result: The table containing the level of sub-tables where the key is not found
         //              2) Index: The index of the key that's not found (Range from 0 to keyCount - 1)
-        //          3. An array containing found tables if found
+        //          3. An array of found tables if found
         //
         //  @param keys: An array containing the exact number of keys that the
         //               user specifies when constructing the container. A key
@@ -1304,8 +1354,9 @@ $(document).ready(() => {
                     throw new Error("The passed in keys'length does not match the key count of the container!");
                 }
                 else{
-                    var tables = [this._data];
-                    var res;
+                    var tables = [this._data];  //  Start from the base table
+                    var res;    //  The results found
+
                     for (let i = 0; i < keys.length; i++){
                         res = this.__findTablesHelper(keys[i], tables);
 
@@ -1313,7 +1364,8 @@ $(document).ready(() => {
                             return undefined;
                         }
                         else{
-                            if (!Array.isArray(res)){
+                            //  If not found. The __findTablesHelper returns false if not found
+                            if (!res){
                                 res = {
                                     Result: tables,
                                     Index: i
@@ -1338,10 +1390,10 @@ $(document).ready(() => {
         //
         //  Return: 1. undefined if the parameters are invalid
         //          2. False if not found
-        //          3. An array containing found tables if found
+        //          3. An array of found tables if found
         //
         //  @param key: The key to match in the table(s). Empty string means "All".
-        //  @param tables: An array containing table(s)
+        //  @param tables: An array of table(s)
         //------------------------------------------------------------------------------
         ESLSuite.MultikeyQueryContainer.prototype.__findTablesHelper = function(key, tables){
             //------------------------------
@@ -1353,10 +1405,11 @@ $(document).ready(() => {
                 return undefined;
             }
 
-            var ret = [];   //  Array
+            var ret = [];   //  Array to return
             var notFound = true; // Flag to check if not found
 
             for (let i = 0; i < tables.length; i++){
+                //  If all sub-tables is requested, which means, the key is an empty string
                 if (key === ""){
                     for (let t in tables[i]){
                         notFound = false;
@@ -1382,12 +1435,24 @@ $(document).ready(() => {
         //  Take the data out of all tables inside the array. In other words, unroll all
         //  objects and take the values out of all properties.
         //
-        //  Return: An array containing data
+        //  Return: An array of data
         //
-        //  @param tables: An array containing table(s)
+        //  @param tables: An array of table(s)
         //------------------------------------------------------------------------------
         ESLSuite.MultikeyQueryContainer.prototype._getDataInTables = function(tables){
 
+            var ret = [];
+
+            if (typeof tables === "undefined" ||
+                !Array.isArray(tables)){
+                return ret;
+            }
+
+            for (let i = 0; i < tables.length; i++){
+                ret = ret.concat(tables[i].Data);
+            }
+
+            return ret;
         };
 
     })();
