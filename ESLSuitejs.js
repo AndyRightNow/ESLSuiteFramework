@@ -16,7 +16,15 @@
 //////////////////////////////////////////////////////////////////////
 
 //  ESLSuite namespace
-var ESLSuite = {};
+var ESLSuite = {
+    //----------------------------------
+    //  Global constants
+    //----------------------------------
+    NONE          : "none", //  Display none
+    OPACITY_0     : "opacity0",
+    MOBILE_WIDTH  : 601, //  Mobile screen width
+    TABLET_WIDTH  : 992
+};
 
 //---------------------------------------------------
 //  Public APIs
@@ -50,13 +58,6 @@ var ESLSuiteAPI = {
 $(document).ready(() => {
     "use strict";
 
-    //----------------------------------
-    //  Global constants
-    //----------------------------------
-    const   NONE          =   "none", //  Display none
-            OPACITY_0     =   "opacity0",
-            MOBILE_WIDTH  =   601; //  Mobile screen width
-
     //----------------------------
     //  Utility namespace
     //----------------------------
@@ -76,7 +77,7 @@ $(document).ready(() => {
         //  Check if it's mobile version
         //-------------------------------
         isMobile: function() {
-            return $(window).width() <= MOBILE_WIDTH;
+            return $(window).width() <= ESLSuite.MOBILE_WIDTH;
         },
 
         //---------------------------------------------
@@ -342,7 +343,7 @@ $(document).ready(() => {
             //--------------------------
             //  Build outer background
             //--------------------------
-            var bg = "<div class='" + POP_OVER_BACKGROUND + " " + NONE + "'></div>";
+            var bg = "<div class='" + POP_OVER_BACKGROUND + " " + ESLSuite.NONE + "'></div>";
             $(bg).appendTo('body');
 
             //--------------------------
@@ -360,7 +361,7 @@ $(document).ready(() => {
             //---------------------------
             //  Append content
             //---------------------------
-            $("." + POP_OVER_CONTENT).appendTo("." + POP_OVER_WINDOW).removeClass(NONE);
+            $("." + POP_OVER_CONTENT).appendTo("." + POP_OVER_WINDOW).removeClass(ESLSuite.NONE);
         })();
 
         //-------------------------------
@@ -433,7 +434,7 @@ $(document).ready(() => {
                                 curPopCont = $("." + thisCont);
 
                                 //  Show the content
-                                curPopCont.removeClass(NONE);
+                                curPopCont.removeClass(ESLSuite.NONE);
                             }
                         });
                     }
@@ -456,8 +457,8 @@ $(document).ready(() => {
         //-----------------------------
         for (let i = 1; i <= POP_CONT_MAX; i++) {
             let thisContClass = "." + POP_CONT + i;
-            if (!$(thisContClass).hasClass(NONE)) {
-                $(thisContClass).addClass(NONE);
+            if (!$(thisContClass).hasClass(ESLSuite.NONE)) {
+                $(thisContClass).addClass(ESLSuite.NONE);
             }
         }
 
@@ -505,7 +506,7 @@ $(document).ready(() => {
             background.fadeOut(ANIMATE_TIME);
 
             setTimeout(function() {
-                curPopCont.toggleClass(NONE);
+                curPopCont.toggleClass(ESLSuite.NONE);
             }, ANIMATE_TIME);
         });
     })();
@@ -582,7 +583,7 @@ $(document).ready(() => {
                 if (numToShow === ALL ||
                     hiddenItems.length <= numToShow) {
                     hiddenItems.removeClass(HIDDEN_ITEM);
-                    showBtn.addClass(NONE);
+                    showBtn.addClass(ESLSuite.NONE);
                 }
                 //---------------------------
                 //  Eles show the elements based
@@ -626,8 +627,8 @@ $(document).ready(() => {
             //--------------------------------------------------------
             //  Add transition. Show the first item and hide others
             //--------------------------------------------------------
-            items.addClass('transition').addClass(OPACITY_0).addClass(NONE);
-            $(items[index]).removeClass(NONE).removeClass(OPACITY_0);
+            items.addClass('transition').addClass(ESLSuite.OPACITY_0).addClass(ESLSuite.NONE);
+            $(items[index]).removeClass(ESLSuite.NONE).removeClass(ESLSuite.OPACITY_0);
 
             var autoFadeCarouselInterval = setInterval(() => {
                     //--------------------------------------------------------------
@@ -643,21 +644,21 @@ $(document).ready(() => {
                     }
 
                     //  Fade out the current item
-                    $(items[index]).addClass(OPACITY_0);
+                    $(items[index]).addClass(ESLSuite.OPACITY_0);
 
                     //------------------------------------
                     //  Display next item after fading
                     //------------------------------------
                     setTimeout(() => {
-                        $(items[index]).addClass(NONE);
+                        $(items[index]).addClass(ESLSuite.NONE);
 
                         //  Wrap index with items length
                         index = (index + 1) % items.length;
 
-                        $(items[index]).removeClass(NONE);
+                        $(items[index]).removeClass(ESLSuite.NONE);
 
                         setTimeout(() => {
-                            $(items[index]).removeClass(OPACITY_0);
+                            $(items[index]).removeClass(ESLSuite.OPACITY_0);
                         }, TRANSITION_TIME / 2);
 
                     }, TRANSITION_TIME);
@@ -1022,7 +1023,7 @@ $(document).ready(() => {
             if (typeof objectsToBind !== "undefined" &&
                 objectsToBind.length !== 0) {
                 //  Disable pointer events
-                objectsToBind.find('*').css("pointer-events", NONE);
+                objectsToBind.find('*').css("pointer-events", ESLSuite.NONE);
 
                 objectsToBind.mouseenter(() => { 
                     mouseIn = true;
