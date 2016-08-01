@@ -160,27 +160,27 @@ $(document).ready(() => {
 
     //--------------------------------------------------------------------------------
     //
-    //  Scroll to show 
+    //  Scroll to show elements
     //
     //  Usage: 
     //  
-    //  Add CSS Class "scrollshow"
+    //  Add CSS Class "scroll-show"
     //  (case sensitive) to the HTML element
     //  you want to scroll to show. When the bottom
     //  of the window goes past the bottom (middle line in mobile) of the element
-    //  , the element will show in effect specified.
+    //  , the element will show in the effect specified.
     //
     //  Effect: The default effect is fadeing in without specific direction. 
-    //          Effects available: "scrollshow-fadefrombottom"
-    //                             "scrollshow-scalein"
-    //  Note: 1. You can not use effects without adding "scrollshow"
+    //          Effects available: "scroll-show-fade-from-bottom"
+    //                             "scroll-show-scale-in"
+    //  Note: 1. You can not use effects without adding "scroll-show"
     //        2. You can only use one effect class at a time.
     //--------------------------------------------------------------------------------
     (function() {
-        const   FADE_FROM_BOTTOM        = "scrollshow-fadefrombottom",
-                SCALE_IN                = "scrollshow-scalein",
-                SCROLL_SHOW             = 'scrollshow',
-                TRANSITION_600MS        = "transition600ms",
+        const   FADE_FROM_BOTTOM        = "scroll-show-fade-from-bottom",
+                SCALE_IN                = "scroll-show-scale-in",
+                SCROLL_SHOW             = 'scroll-show',
+                TRANSITION_600MS        = "transition-600ms",
                 TRANSITION_TIME         = 600; //Transition time in millisecond
 
         
@@ -189,14 +189,14 @@ $(document).ready(() => {
                 currElem,                       //  Current element to show
                 removeTransitionQueue   = [];   //  A queue used to store the actions of removing transitions
 
-        //  Add transitions to all scrollshow elements
+        //  Add transitions to all scroll-show elements
         $("." + SCROLL_SHOW).addClass(TRANSITION_600MS);
 
         var ScrollToShowEventLoop = setInterval(() => {
 
             //--------------------------------------
             //  Get the collection of elements with
-            //  class "scrollshow" and check if the collection's
+            //  class "scroll-show" and check if the collection's
             //  length equals to zero or the collection is 
             //  undefined, clear the interval.
             //--------------------------------------
@@ -303,14 +303,12 @@ $(document).ready(() => {
 
     //---------------------------------------------------
     //
-    //  Popped-out window
+    //  Popped-over window
     //
     //  Usage: 
     //  
-    //  Add CSS Class 'popoverbtn'
-    //  to the button that triggers popped-out window.
     //  Add CSS Class 'popovercontent' to the outermost
-    //  HTML element of your content in popped-out window.
+    //  HTML element of your content in popped-over window.
     //  Add CSS class "popcont1" to "popcont50" and "popbtn1" to "popobtn50"
     //  respectively to the corresponding contents and buttons.
     //  
@@ -326,7 +324,7 @@ $(document).ready(() => {
               HIDE_PROP             =    "translate(-50%, -50%) scale(0)",  //  Property used to hide the window
               ANIMATE_TIME          =    400,                               //  Window animate time
               NO_OVERFLOW           =    "nooverflow",                      //  No vertical scrolling
-              POP_CONT_MAX          =    50,                                //  Max popped out window content
+              POP_CONT_MAX          =    50,                                //  Max popped over window content
               POP_BUTTON_NO_MOBILE  =    "popbtn-nomobile",
               MOBILE_WINDOW_WIDTH   =    "100vw",
               MOBILE_WINDOW_HEIGHT  =    "80vh",
@@ -347,7 +345,7 @@ $(document).ready(() => {
             $(bg).appendTo('body');
 
             //--------------------------
-            //  Build popped-out window
+            //  Build popped-over window
             //--------------------------
             var wnd = "<div class='" + POP_OVER_WINDOW + " whiteback text-center'></div>";
             $(wnd).appendTo("." + POP_OVER_BACKGROUND);
@@ -365,13 +363,13 @@ $(document).ready(() => {
         })();
 
         //-------------------------------
-        //  Popped out window jquery vars
+        //  Popped over window jquery vars
         //-------------------------------
         var background = $("." + POP_OVER_BACKGROUND),
             wnd = $("." + POP_OVER_WINDOW),
             close = $('.close');
 
-        //  Currrent popped out content
+        //  Currrent popped over content
         var curPopCont = null;
 
         //------------------------
@@ -1281,7 +1279,7 @@ $(document).ready(() => {
         //---------------------------------------------------------------------------------
         //  Insert element into the container
         //
-        //  Return: A bool to indicate if the insertion is successful
+        //  Return: no
         //
         //  @param keys: An array containing the exact number of keys that the
         //               user specifies when constructing the container. A key
@@ -1294,16 +1292,21 @@ $(document).ready(() => {
             var tables = this._findTables(keys);
 
             if (typeof tables === "undefined"){
-                return false;
+                return;
             }
 
-            //  Found
+            //-------------------------------------
+            //  If found, push element to the Data
+            //-------------------------------------
             if (Array.isArray(tables)){ 
                 for (let i = 0; i < tables.length; i++){
                     tables[i].Data.push(element);
                 }
             }
-            //  Not found
+            //------------------------------------
+            //  If not found, create the tables 
+            //  for keys that are not found
+            //------------------------------------
             else{   
                 //  Get the index of the key absent
                 let index = tables.Index;   
@@ -1328,7 +1331,7 @@ $(document).ready(() => {
                 }
             }
 
-            return true;
+            return;
         };
 
         //-----------------------------------
