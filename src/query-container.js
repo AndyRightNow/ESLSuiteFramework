@@ -1,3 +1,5 @@
+const ESLSuite = require("./eslsuite");
+
 //-------------------------------------------------------------------------
 //  Multi-key query container data structure
 //

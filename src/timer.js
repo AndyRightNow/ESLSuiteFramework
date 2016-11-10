@@ -1,3 +1,5 @@
+const ESLSuite = require("./eslsuite");
+
 //--------------------------------------------------
 // 
 //  UTC Count Down Timer

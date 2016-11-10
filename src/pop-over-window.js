@@ -1,3 +1,6 @@
+const ESLSuite = require("./eslsuite");
+const ESLSuiteAPI = require("./eslsuite-api");
+
 //---------------------------------------------------
 //
 //  Popped-over window

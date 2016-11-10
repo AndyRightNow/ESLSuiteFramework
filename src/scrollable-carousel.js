@@ -1,3 +1,5 @@
+const ESLSuite = require("./eslsuite");
+
 //--------------------------------------------------
 // 
 //  Scrollable Carousel
