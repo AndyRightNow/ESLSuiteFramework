@@ -33,7 +33,7 @@ a:hover,
   -moz-transition: all .4s ease-in-out;
 }
 
-.transition600ms{
+.transition-600ms{
   transition: all .6s ease-in-out;
   -webkit-transition: all .6s ease-in-out;
   -o-transition: all .6s ease-in-out;
@@ -194,18 +194,18 @@ a:hover,
   Classes for scroll show effects
 ***********************************/
 
-.scrollshow {
+.scroll-show {
   opacity: 0;
 }
 
-.scrollshow-fadefrombottom {
+.scroll-show-fade-from-bottom {
   transform: translateY(40%);
   -webkit-transform: translateY(40%);
   -o-transform: translateY(40%);
   -moz-transform: translateY(40%);
 }
 
-.scrollshow-scalein {
+.scroll-show-scale-in {
   transform: scale(0);
   -webkit-transform: scale(0);
   -o-transform: scale(0);

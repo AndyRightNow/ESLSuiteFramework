@@ -193,7 +193,6 @@ $(document).ready(() => {
         $("." + SCROLL_SHOW).addClass(TRANSITION_600MS);
 
         var ScrollToShowEventLoop = setInterval(() => {
-
             //--------------------------------------
             //  Get the collection of elements with
             //  class "scroll-show" and check if the collection's
@@ -201,7 +200,8 @@ $(document).ready(() => {
             //  undefined, clear the interval.
             //--------------------------------------
             var elements = Array.from($("." + SCROLL_SHOW));
-            if (typeof elements === "undefined" ||
+            if (!elements ||
+                typeof elements === "undefined" ||
                 elements.length === 0) {
                 clearInterval(ScrollToShowEventLoop);
             }
@@ -699,8 +699,10 @@ $(document).ready(() => {
         //  @param isOuter:  Check if the current elements to process has
         //                   "adapt-outer-height" or "adapt-height"
         //---------------------------------------------
-        function adjustHeight(elements, isOuter){
-            $.each(elements, (i, val) => {
+        function adjustHeight(elements, isOuter) {
+            var val;
+            for (var i = 0, ll = elements.length; i < ll; i++) {
+                val = elements[i];
                 //  Fetch the attribute value depending on isOuter
                 let attrVal = $(val).attr(isOuter ? 
                                     ADAPT_OUTER_HEIGHT : ADAPT_HEIGHT);
@@ -720,7 +722,7 @@ $(document).ready(() => {
                         $(val).height(thisHeight);
                     }
                 }
-            });
+            }
         }
 
         //-------------------------------------------------------------------
