@@ -1,0 +1,6 @@
+{
+  "command": "D:/Program Files/nodejs/node.exe",
+  "isShellCommand": true,
+  "args": ["./main.js"],
+  "showOutput": "always"
+}
