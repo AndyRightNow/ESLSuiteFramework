@@ -15,3 +15,13 @@ TaskRunner
     dir: "../dist",
     name: "ESLSuitejs.dist.js"
   });
+
+
+CommandsRunner
+  .run("git push origin master")
+  .then(stdout => {
+    log("Success:", stdout);
+  })
+  .catch(err => {
+    log(err.message);
+  });
