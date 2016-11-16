@@ -1,0 +1,6 @@
+{
+  "name": "task-runner",
+  "dependencies": {
+    "0": "./../extract"
+  }
+}

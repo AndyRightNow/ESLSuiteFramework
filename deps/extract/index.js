@@ -2,7 +2,7 @@
 
 const fs = require("fs");
 
-/*
+/**
  * Extract all text from a ASCII encoding file and return as a string
  *
  * @param pathName Directory name including the file name to extract
@@ -14,7 +14,7 @@ function extractASCII(pathName) {
   }) : null;
 }
 
-/*
+/**
  * Extract all text from a UTF-8 encoding file and return as a string
  *
  * @param pathName Directory name including the file name to extract

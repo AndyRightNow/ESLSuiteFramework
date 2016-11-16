@@ -1,6 +1,6 @@
 "use strict";
 
-const extract = require("./../utils/extract");
+const extract = require("./../extract");
 const path = require("path");
 const fs = require("fs");
 
@@ -9,7 +9,7 @@ function TaskTarget(argObj) {
   this.content = argObj.content;
 }
 
-/*
+/**
  * Run a function on the current task target
  *
  * @param {Function} func Function to run on the task target
@@ -38,7 +38,7 @@ TaskTarget.prototype.task = function (func, argObj) {
   return newTaskTarget;
 }
 
-/*
+/**
  * Output the content to directory that is relative to the original path
  *
  * @param {string} argObj.dir Relative directory to output
@@ -59,7 +59,7 @@ TaskTarget.prototype.output = function (argObj) {
   
   var finalDir = path.resolve(path.dirname(this.path), dir);
   if (!fs.existsSync(finalDir)) {
-    fs.mkdir(finalDir);
+    fs.mkdirSync(finalDir);
   }
   fs.writeFileSync(path.resolve(finalDir, name), this.content, "UTF-8");
 
@@ -71,7 +71,7 @@ TaskTarget.prototype.output = function (argObj) {
 
 // Entry point of the task runner
 var TaskRunner = {
-  /*
+  /**
    * Get the content and the path of a file path name and return a task target object for task chaining
    *
    * @param {string} pathName The file path name to get the source

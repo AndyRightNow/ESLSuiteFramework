@@ -1,10 +1,10 @@
 "use strict";
 
 const log = console.log;
-const TaskRunner = require("./deps/task-runner/task-runner");
-const inlineImports = require("./deps/utils/inliner").inlineImports;
-const stripComments = require("./deps/utils/strip-comments");
-const stripNewlines = require("./deps/utils/strip-newlines");
+const TaskRunner = require("./deps/task-runner");
+const inlineImports = require("./deps/inline-imports");
+const stripComments = require("./deps/strip-comments");
+const stripNewlines = require("./deps/strip-newlines");
 
 TaskRunner
   .text("./src/index.js")

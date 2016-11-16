@@ -1,7 +1,7 @@
-"use strict";
+"use stricta";
 
 module.exports = class TableTreeNode {
-  /*
+  /**
    * TableTreeNode constructor
    *
    * @param {object} table The table data passed to this node. Default to an empty object
@@ -12,7 +12,7 @@ module.exports = class TableTreeNode {
     this.parent = parent || null;
   }
 
-  /*
+  /**
    * Check if a key is a string
    *
    * @param {string} key The key to check
@@ -22,7 +22,7 @@ module.exports = class TableTreeNode {
     return key && typeof key === "string";
   }
 
-  /*
+  /**
    * Insert a key-value pair into the table
    *
    * @param {string} key The key to insert
@@ -39,7 +39,7 @@ module.exports = class TableTreeNode {
     }
   }
 
-  /*
+  /**
    * Check if a key exists in any node above(including the current node)
    *
    * @param {string} key The key to check
@@ -57,19 +57,19 @@ module.exports = class TableTreeNode {
     return false;
   }
 
-  /*
- * Check if a key exists in this node
- *
- * @param {string} key The key to check
- * @return True if the key exists
- */
+  /**
+   * Check if a key exists in this node
+   *
+   * @param {string} key The key to check
+   * @return True if the key exists
+   */
   exists(key) {
     if (!this._checkKey(key)) return false;
 
     return !!this._table[key];
   }
 
-  /*
+  /**
    * Get the child of this key
    *
    * @param {string} key The key to get the child
@@ -81,7 +81,7 @@ module.exports = class TableTreeNode {
     return this._table[key].next;
   }
 
-  /*
+  /**
    * Remove a key-value pair and all children below
    *
    * @param {string} key The key to remove

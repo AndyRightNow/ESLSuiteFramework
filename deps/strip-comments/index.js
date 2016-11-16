@@ -1,6 +1,8 @@
+"use strict";
+
 const COMMENT_REGEX = /([\s\n\r]*?([/][/]).*?[\n\r]+?)|(([/][*])(.|\s)*?([*][/]))/;
 
-/*
+/**
  * Strip off all comments in a file
  *
  * @param {string} options.path Path name of the HTML file name to process
