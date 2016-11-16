@@ -5,6 +5,7 @@ const TaskRunner = require("./deps/task-runner");
 const inlineImports = require("./deps/inline-imports");
 const stripComments = require("./deps/strip-comments");
 const stripNewlines = require("./deps/strip-newlines");
+const CommandsRunner = require("./deps/commands-runner");
 
 TaskRunner
   .text("./src/index.js")
