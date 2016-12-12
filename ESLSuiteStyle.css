@@ -242,6 +242,9 @@ a:hover,
 .width20 {
   width: 20%;
 }
+.width25 {
+  width: 20%;
+}
 
 .width30 {
   width: 30%;
@@ -322,7 +325,7 @@ a:hover,
 }
 
 .none {
-  display: none;
+  display: none!important;
 }
 
 
