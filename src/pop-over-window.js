@@ -122,6 +122,7 @@ module.exports =
 
                 //  Show backgournd
                 background.fadeIn(ANIMATE_TIME);
+                background.removeClass(ESLSuite.NONE);
 
                 //  Show window
                 transform(wnd, SHOW_PROP);
